@@ -128,7 +128,7 @@ function Resume() {
         style={{textDecoration: "none", marginBottom: "5px"}}
       >
         <i className="bi bi-file-earmark-arrow-down me-2"></i>
-        Download CV (PDF)
+        Resume
       </a>
       <h3 className="mt-5 mb-3 fw-bold">
         Professional Experience
