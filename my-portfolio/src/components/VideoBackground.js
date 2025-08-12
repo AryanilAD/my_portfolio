@@ -1,4 +1,3 @@
-// components/VideoBackground.jsx
 import React, { useEffect, useRef, useState } from "react";
 
 const baseVideoStyle = {
@@ -12,8 +11,8 @@ const baseVideoStyle = {
   objectPosition: "center center",
   zIndex: -2,
   pointerEvents: "none",
-  backgroundColor: "#000"
-  opacity: 0.45
+  backgroundColor: "#000",
+  opacity: 0.45,
 };
 
 export default function VideoBackground() {
@@ -23,34 +22,26 @@ export default function VideoBackground() {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-
-    // Ensure attributes for best autoplay compatibility
     v.muted = true;
     v.playsInline = true;
-
-    const tryAutoplay = async () => {
+    (async () => {
       try {
         await v.play();
         setNeedsPlayButton(false);
       } catch {
-        // Autoplay blocked (common on iOS/Android if policy changes)
         setNeedsPlayButton(true);
       }
-    };
-
-    // Kick off autoplay after mount
-    tryAutoplay();
+    })();
   }, []);
 
   const handleManualPlay = async () => {
     const v = videoRef.current;
     if (!v) return;
     try {
-      v.muted = true; // keep muted for background
+      v.muted = true;
       await v.play();
       setNeedsPlayButton(false);
     } catch {
-      // If manual play still fails, keep the button visible
       setNeedsPlayButton(true);
     }
   };
@@ -63,7 +54,7 @@ export default function VideoBackground() {
         width: "100vw",
         height: "100vh",
         overflow: "hidden",
-        zIndex: -2
+        zIndex: -2,
       }}
     >
       <video
@@ -74,15 +65,12 @@ export default function VideoBackground() {
         loop
         playsInline
         preload="auto"
-        poster="/assets/video/poster.jpg" /* optional */
+        poster="/assets/video/poster.jpg"
       >
         <source src="/assets/bg.mp4" type="video/mp4" />
-        {/* Add a webm if you have one for better compatibility */}
-        {/* <source src="/assets/bg.webm" type="video/webm" /> */}
         Your browser does not support the video tag.
       </video>
 
-      {/* If autoplay is blocked, show a tiny play button overlay to trigger playback */}
       {needsPlayButton && (
         <button
           onClick={handleManualPlay}
@@ -100,7 +88,7 @@ export default function VideoBackground() {
             WebkitBackdropFilter: "blur(6px)",
             cursor: "pointer",
             fontWeight: 600,
-            boxShadow: "0 6px 18px rgba(0,0,0,0.25)"
+            boxShadow: "0 6px 18px rgba(0,0,0,0.25)",
           }}
           aria-label="Play background video"
         >
@@ -108,7 +96,6 @@ export default function VideoBackground() {
         </button>
       )}
 
-      {/* Responsive overrides */}
       <style>{`
         @media (max-width: 768px) {
           video {
