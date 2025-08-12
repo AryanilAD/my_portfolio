@@ -35,12 +35,6 @@ function About() {
               <li><b>Framework/Cloud:</b> Flask, AWS EC2, Amazon SageMaker, AWS S3</li>
             </ul>
             <p>
-              <span role="img" aria-label="globe">🌍</span> <strong>Beyond Data</strong>
-            </p>
-            <p>
-              I love exploring new places, music, cooking, and cricket. As a cricket fan, I enjoy sports analysis. I'm passionate about pop culture and creativity.
-            </p>
-            <p>
               <span role="img" aria-label="handshake">🤝</span> <strong>Let's Collaborate</strong>
             </p>
             <p>
