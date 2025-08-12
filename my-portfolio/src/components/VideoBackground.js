@@ -6,11 +6,21 @@ export default function VideoBackground() {
   const [needsPlayButton, setNeedsPlayButton] = useState(false);
 
   useEffect(() => {
+    // iOS/Android mobile 100dvh fix: update CSS var on resize
+    const setVH = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+    setVH();
+    window.addEventListener("resize", setVH);
+    return () => window.removeEventListener("resize", setVH);
+  }, []);
+
+  useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
     v.muted = true;
     v.playsInline = true;
-
     (async () => {
       try {
         await v.play();
@@ -35,20 +45,20 @@ export default function VideoBackground() {
 
   return (
     <>
-      {/* Fixed wrapper prevents any page scroll/resize causing gaps */}
+      {/* Fixed wrapper that always matches viewport and clips overflow */}
       <div
         aria-hidden="true"
         style={{
           position: "fixed",
           inset: 0,
           width: "100vw",
-          height: "100vh",
+          // Use dynamic viewport height to avoid gaps behind mobile toolbars
+          height: "calc(var(--vh, 1vh) * 100)",
           overflow: "hidden",
           zIndex: -2,
           backgroundColor: "#000"
         }}
       >
-        {/* Background video that truly covers any aspect ratio */}
         <video
           ref={videoRef}
           autoPlay
@@ -62,11 +72,12 @@ export default function VideoBackground() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
+            // Base fill
             width: "100vw",
-            height: "100vh",
+            height: "calc(var(--vh, 1vh) * 100)",
             objectFit: "cover",
-            objectPosition: "center center",
-            // Extra safety for devices that ignore object-fit during layout:
+            objectPosition: "center",
+            // Extra safety in case device ignores object-fit initially
             minWidth: "100%",
             minHeight: "100%",
             pointerEvents: "none"
@@ -81,15 +92,14 @@ export default function VideoBackground() {
           style={{
             position: "absolute",
             inset: 0,
-            pointerEvents: "none",
             zIndex: 1,
+            pointerEvents: "none",
             background:
               "linear-gradient(180deg, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.50) 45%, rgba(0,0,0,0.42) 100%)"
           }}
         />
       </div>
 
-      {/* Autoplay fallback only when required */}
       {needsPlayButton && (
         <button
           onClick={handleManualPlay}
@@ -115,26 +125,31 @@ export default function VideoBackground() {
         </button>
       )}
 
-      {/* Hardening for mobile and iOS Safari */}
       <style>{`
+        /* Ensure root can accommodate our fixed layers */
         html, body, #root {
           height: 100%;
         }
+
+        /* Enforce cover regardless of aspect ratio */
         @supports (object-fit: cover) {
           video {
             object-fit: cover !important;
             object-position: center center !important;
           }
         }
-        /* Force fill on extreme tall/narrow or wide screens */
+
+        /* Handle extreme tall screens (portrait phones) */
         @media (max-aspect-ratio: 9/16) {
           video {
-            width: 100vh !important;
-            height: 100vh !important;
+            width: calc(var(--vh, 1vh) * 100) !important; /* tie width to height to avoid side gaps */
+            height: calc(var(--vh, 1vh) * 100) !important;
             min-width: 100% !important;
             min-height: 100% !important;
           }
         }
+
+        /* Handle extreme wide screens (landscape phones) */
         @media (min-aspect-ratio: 16/9) {
           video {
             width: 100vw !important;
@@ -143,9 +158,10 @@ export default function VideoBackground() {
             min-height: 100% !important;
           }
         }
-        /* iOS Safari viewport resizing on scroll address bar */
-        @media (max-width: 768px) {
-          body { min-height: 100vh; }
+
+        /* iOS Safari toolbar shrink/expand */
+        @media (max-width: 1024px) {
+          body { min-height: calc(var(--vh, 1vh) * 100); }
         }
       `}</style>
     </>
