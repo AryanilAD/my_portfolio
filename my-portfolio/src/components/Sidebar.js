@@ -4,7 +4,7 @@ const navItems = [
   { id: "home", icon: "bi-house-door-fill", label: "Home", gradient: "linear-gradient(135deg, #36d1c4, #00baff)" },
   { id: "about", icon: "bi-person-circle", label: "About", gradient: "linear-gradient(135deg, #fa709a, #fee140)" },
   { id: "projects", icon: "bi-kanban-fill", label: "Projects", gradient: "linear-gradient(135deg, #ff5858, #f09819)" },
-  { id: "resume", icon: "bi-journal-text", label: "Resume", gradient: "linear-gradient(135deg, #fc466b, #3f5efb)" },
+  { id: "professional Exp", icon: "bi-journal-text", label: "Resume", gradient: "linear-gradient(135deg, #fc466b, #3f5efb)" },
   { id: "education", icon: "bi-mortarboard-fill", label: "Education", gradient: "linear-gradient(135deg, #11998e, #38ef7d)" },
   { id: "hobbies", icon: "bi-award-fill", label: "Hobbies", gradient: "linear-gradient(135deg, #fc00ff, #00dbde)" },
   { id: "contact", icon: "bi-envelope-fill", label: "Contact", gradient: "linear-gradient(135deg, #a770ef, #fdb99b)" }
