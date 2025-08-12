@@ -43,14 +43,17 @@ function HeroSection() {
         >
           Aryanil Dey
         </h1>
+
         {/* Typewriter with underline */}
-        <div style={{
-          display: "inline-block",
-          position: "relative",
-          textAlign: "left",
-          marginBottom: 28,
-          marginLeft: 28
-        }}>
+        <div
+          style={{
+            display: "inline-block",
+            position: "relative",
+            textAlign: "left",
+            marginBottom: 16,
+            marginLeft: 28
+          }}
+        >
           <span
             style={{
               fontSize: 28,
@@ -73,12 +76,51 @@ function HeroSection() {
             }}
           />
         </div>
+
+        {/* Resume button directly under typewriter */}
+        <a
+          href="/assets/AD_Resume_25.pdf"
+          className="cv-download-btn"
+          target="_blank"
+          rel="noopener noreferrer"
+          download
+          tabIndex={0}
+          style={{
+            textDecoration: "none",
+            marginLeft: 28,
+            marginTop: 8,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 10,
+            background: "linear-gradient(135deg, #2aa6e8 0%, #29B6F6 100%)",
+            color: "#0b172a",
+            padding: "10px 16px",
+            borderRadius: 10,
+            fontWeight: 700,
+            boxShadow: "0 6px 20px rgba(41,182,246,0.28)",
+            transition: "transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease"
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = "translateY(-1px)";
+            e.currentTarget.style.boxShadow = "0 10px 24px rgba(41,182,246,0.35)";
+            e.currentTarget.style.filter = "brightness(1.03)";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "0 6px 20px rgba(41,182,246,0.28)";
+            e.currentTarget.style.filter = "none";
+          }}
+        >
+          <i className="bi bi-file-earmark-arrow-down" style={{ fontSize: 20, color: "#0b172a" }} />
+          <span>Resume</span>
+        </a>
+
         {/* Social Icons - Solid White with Hover Animation */}
         <div
           style={{
             fontSize: 0,
             textAlign: "left",
-            marginTop: 20,
+            marginTop: 24,
             marginLeft: 26,
             display: "flex",
             gap: 18
@@ -144,6 +186,7 @@ function HeroSection() {
           </a>
         </div>
       </div>
+
       {/* Right side: profile photo */}
       <div className="hero-photo" tabIndex={0}>
         <img
