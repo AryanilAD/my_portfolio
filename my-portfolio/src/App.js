@@ -1,10 +1,11 @@
+// App.js — ensure correct import and usage
 import VideoBackground from "./components/VideoBackground";
 import Sidebar from "./components/Sidebar";
 import HeroSection from "./components/HeroSection";
 import About from "./components/About";
 import Skills from "./components/Skills";
 import Projects from "./components/Projects";
-import Resume from "./components/ProfessionalExperience";
+import ProfessionalExperience from "./components/ProfessionalExperience";
 import Education from "./components/Education";
 import Hobbies from "./components/Hobbies";
 import Contact from "./components/Contact";
@@ -17,14 +18,14 @@ function App() {
       {/* Overlay for readability */}
       <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: 'rgba(17,23,39,0.07)',
+          width: "100vw",
+          height: "100vh",
+          background: "rgba(17,23,39,0.07)",
           zIndex: -1,
-          pointerEvents: 'none'
+          pointerEvents: "none",
         }}
       />
       <Sidebar />
