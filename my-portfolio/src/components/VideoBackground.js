@@ -35,48 +35,61 @@ export default function VideoBackground() {
 
   return (
     <>
-      {/* Video layer */}
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        poster="/assets/video/poster.jpg"
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "100vw",
-          height: "100vh",
-          objectFit: "cover",          // fill any phone aspect ratio without distortion
-          objectPosition: "center",    // center crop
-          zIndex: -2,
-          pointerEvents: "none",
-          backgroundColor: "#000"
-        }}
-      >
-        <source src="/assets/bg.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-
-      {/* Dark overlay above video, below content */}
+      {/* Fixed wrapper prevents any page scroll/resize causing gaps */}
       <div
         aria-hidden="true"
         style={{
           position: "fixed",
           inset: 0,
-          zIndex: -1,
-          pointerEvents: "none",
-          // Subtle gradient for readability; adjust opacities if needed
-          background:
-            "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.46) 45%, rgba(0,0,0,0.40) 100%)"
+          width: "100vw",
+          height: "100vh",
+          overflow: "hidden",
+          zIndex: -2,
+          backgroundColor: "#000"
         }}
-      />
+      >
+        {/* Background video that truly covers any aspect ratio */}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/assets/video/poster.jpg"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "100vw",
+            height: "100vh",
+            objectFit: "cover",
+            objectPosition: "center center",
+            // Extra safety for devices that ignore object-fit during layout:
+            minWidth: "100%",
+            minHeight: "100%",
+            pointerEvents: "none"
+          }}
+        >
+          <source src="/assets/bg.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
 
-      {/* Autoplay fallback (appears only if autoplay blocked) */}
+        {/* Dark overlay above video, below content */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+            zIndex: 1,
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.50) 45%, rgba(0,0,0,0.42) 100%)"
+          }}
+        />
+      </div>
+
+      {/* Autoplay fallback only when required */}
       {needsPlayButton && (
         <button
           onClick={handleManualPlay}
@@ -102,26 +115,37 @@ export default function VideoBackground() {
         </button>
       )}
 
-      {/* Mobile/tablet hardening to handle extreme aspect ratios */}
+      {/* Hardening for mobile and iOS Safari */}
       <style>{`
+        html, body, #root {
+          height: 100%;
+        }
         @supports (object-fit: cover) {
-          /* Ensure all devices keep full-viewport cover */
           video {
-            width: 100vw !important;
-            height: 100vh !important;
             object-fit: cover !important;
             object-position: center center !important;
           }
         }
-
-        /* iOS Safari viewport quirks fix */
+        /* Force fill on extreme tall/narrow or wide screens */
+        @media (max-aspect-ratio: 9/16) {
+          video {
+            width: 100vh !important;
+            height: 100vh !important;
+            min-width: 100% !important;
+            min-height: 100% !important;
+          }
+        }
+        @media (min-aspect-ratio: 16/9) {
+          video {
+            width: 100vw !important;
+            height: 100vw !important;
+            min-width: 100% !important;
+            min-height: 100% !important;
+          }
+        }
+        /* iOS Safari viewport resizing on scroll address bar */
         @media (max-width: 768px) {
-          html, body {
-            height: 100%;
-          }
-          body {
-            min-height: 100vh;
-          }
+          body { min-height: 100vh; }
         }
       `}</style>
     </>
