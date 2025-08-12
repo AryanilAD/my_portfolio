@@ -1,4 +1,4 @@
-// components/Sidebar.jsx — mobile clickable fix with proper z-index stacking
+// components/Sidebar.jsx — mobile click fix by resizing scrim
 import React, { useEffect, useRef, useState } from "react";
 
 const navItems = [
@@ -16,6 +16,7 @@ function Sidebar() {
   const [open, setOpen] = useState(false);
   const drawerRef = useRef(null);
 
+  // Close on outside click
   useEffect(() => {
     const onTapOutside = (e) => {
       if (!open) return;
@@ -29,6 +30,7 @@ function Sidebar() {
     };
   }, [open]);
 
+  // Lock scroll on mobile when open
   useEffect(() => {
     if (open) {
       const prev = document.body.style.overflow;
@@ -41,13 +43,12 @@ function Sidebar() {
 
   return (
     <>
-      {/* Toggle button */}
+      {/* Toggle */}
       <button
         type="button"
+        onClick={() => setOpen(v => !v)}
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
-        aria-controls="mobile-sidebar"
-        onClick={() => setOpen(v => !v)}
         style={{
           position: "fixed",
           left: 14,
@@ -60,24 +61,25 @@ function Sidebar() {
           background: "rgba(26,32,54,0.55)",
           color: "#e9f4ff",
           backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
           cursor: "pointer"
         }}
         className="sidebar-toggle"
       >
-        <i className={`bi ${open ? "bi-x-lg" : "bi-list"}`} style={{ fontSize: 22, lineHeight: 0 }} />
+        <i className={`bi ${open ? "bi-x-lg" : "bi-list"}`} style={{ fontSize: 22 }} />
       </button>
 
-      {/* Scrim - now below sidebar z-index */}
+      {/* Scrim shifted to the right of the sidebar so it doesn't cover it */}
       <div
         onClick={() => setOpen(false)}
         style={{
           position: "fixed",
-          inset: 0,
+          top: 0,
+          left: 74, // start right after sidebar
+          width: "calc(100% - 74px)",
+          height: "100vh",
           zIndex: 1200,
           background: open ? "rgba(0,0,0,0.35)" : "transparent",
           pointerEvents: open ? "auto" : "none",
@@ -87,31 +89,30 @@ function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        id="mobile-sidebar"
         ref={drawerRef}
-        className="d-flex flex-column align-items-center justify-content-between sidebar-glass"
         style={{
           width: 74,
           height: "100vh",
           position: "fixed",
           left: 0,
           top: 0,
-          zIndex: 1250, // ABOVE the scrim so links are clickable
-          padding: "2rem 0 1.5rem 0",
+          zIndex: 1250, // above scrim
+          padding: "2rem 0 1.5rem",
           background: "rgba(36,45,102,0.23)",
           borderRight: "2px solid rgba(210,222,230,0.08)",
           backdropFilter: "blur(19px) saturate(160%)",
           transform: open ? "translateX(0)" : "translateX(-110%)",
           transition: "transform 280ms cubic-bezier(.22,.9,.26,1)"
         }}
+        className="sidebar-glass"
       >
         <nav className="d-flex flex-column align-items-center gap-3" style={{ width: "100%" }}>
           {navItems.map((nav, idx) => (
             <a
               key={nav.id}
               href={`#${nav.id}`}
-              title={nav.label}
               onClick={handleNavClick}
+              title={nav.label}
               className="d-flex align-items-center justify-content-center position-relative sidebar-icon-link"
               style={{
                 width: 52,
@@ -119,21 +120,10 @@ function Sidebar() {
                 borderRadius: "50%",
                 background: "rgba(245,245,245,0.07)",
                 color: "#e1e6ef",
-                border: "none",
-                boxShadow: hovered === nav.id
-                  ? "0 0 16px 0.4px rgba(41,182,246,0.17)"
-                  : "0 1px 6px rgba(40,50,80,0.03)",
-                fontSize: 26,
-                cursor: "pointer",
-                outline: "none",
-                marginBottom: idx === navItems.length - 1 ? 0 : 2,
-                transition: "all 0.25s cubic-bezier(.45,1.35,.34,1.2)"
+                cursor: "pointer"
               }}
-              tabIndex={0}
               onMouseEnter={() => setHovered(nav.id)}
               onMouseLeave={() => setHovered(null)}
-              onFocus={() => setHovered(nav.id)}
-              onBlur={() => setHovered(null)}
             >
               <i
                 className={`bi ${nav.icon}`}
@@ -141,66 +131,24 @@ function Sidebar() {
                   background: nav.gradient,
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  color: "transparent",
-                  fontSize: 28,
-                  transition: "transform 0.23s cubic-bezier(.47,1.52,.41,.98), filter 0.17s",
-                  transform: hovered === nav.id ? "scale(1.19) rotate(-8deg)" : "scale(1) rotate(0)",
-                  filter: hovered === nav.id ? "drop-shadow(0 2px 10px rgba(40,144,255,0.12))" : "none"
+                  fontSize: 28
                 }}
               />
-              <span
-                className="sidebar-label"
-                style={{
-                  position: "absolute",
-                  left: 58,
-                  top: "50%",
-                  transform: hovered === nav.id ? "translateY(-50%) scale(1)" : "translateY(-50%) scale(0.92)",
-                  background: "rgba(20,23,39,0.94)",
-                  color: "#fff",
-                  fontWeight: 500,
-                  fontSize: 15,
-                  letterSpacing: 0.4,
-                  padding: hovered === nav.id ? "7px 18px" : "7px 0",
-                  borderRadius: 7,
-                  opacity: hovered === nav.id ? 1 : 0,
-                  pointerEvents: "none",
-                  boxShadow: hovered === nav.id ? "0 4px 16px rgba(44,152,243,0.10)" : "none",
-                  whiteSpace: "nowrap",
-                  transition: "all 0.18s cubic-bezier(.87,0,.13,1)"
-                }}
-              >
-                {nav.label}
-              </span>
+              <span className="sidebar-label" style={{ display: "none" }}>{nav.label}</span>
             </a>
           ))}
         </nav>
-
-        {/* Socials */}
-        <div className="d-flex flex-column align-items-center gap-2 mt-4">
-          <a href="https://github.com/AryanilAD" target="_blank" rel="noopener noreferrer">
-            <i className="bi bi-github" />
-          </a>
-          <a href="https://www.linkedin.com/in/aryanildey" target="_blank" rel="noopener noreferrer">
-            <i className="bi bi-linkedin" />
-          </a>
-        </div>
-
-        <style>{`
-          .sidebar-glass {
-            background: rgba(36,45,102,0.16);
-            backdrop-filter: blur(13px) saturate(146%);
-          }
-          @media (max-width: 991px) {
-            .sidebar-label { display: none !important; }
-            .sidebar-toggle { display: flex !important; }
-          }
-          @media (min-width: 992px) {
-            aside { transform: translateX(0) !important; }
-            .sidebar-toggle { display: none !important; }
-          }
-        `}</style>
       </aside>
+
+      <style>{`
+        @media (max-width: 991px) {
+          .sidebar-toggle { display: flex !important; }
+        }
+        @media (min-width: 992px) {
+          aside { transform: translateX(0) !important; }
+          .sidebar-toggle { display: none !important; }
+        }
+      `}</style>
     </>
   );
 }
