@@ -1,5 +1,4 @@
-// components/Sidebar.jsx — always visible sidebar on desktop/laptop, retractable on mobile
-
+// components/Sidebar.jsx — mobile clickable fix with proper z-index stacking
 import React, { useEffect, useRef, useState } from "react";
 
 const navItems = [
@@ -34,9 +33,7 @@ function Sidebar() {
     if (open) {
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-      };
+      return () => { document.body.style.overflow = prev; };
     }
   }, [open]);
 
@@ -44,7 +41,7 @@ function Sidebar() {
 
   return (
     <>
-      {/* Toggle button visible only on mobile */}
+      {/* Toggle button */}
       <button
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
@@ -55,7 +52,7 @@ function Sidebar() {
           position: "fixed",
           left: 14,
           top: 14,
-          zIndex: 1201,
+          zIndex: 1300,
           width: 44,
           height: 44,
           borderRadius: 12,
@@ -75,7 +72,7 @@ function Sidebar() {
         <i className={`bi ${open ? "bi-x-lg" : "bi-list"}`} style={{ fontSize: 22, lineHeight: 0 }} />
       </button>
 
-      {/* Scrim on mobile */}
+      {/* Scrim - now below sidebar z-index */}
       <div
         onClick={() => setOpen(false)}
         style={{
@@ -88,7 +85,7 @@ function Sidebar() {
         }}
       />
 
-      {/* Sidebar drawer on mobile, always visible on desktop/laptop */}
+      {/* Sidebar */}
       <aside
         id="mobile-sidebar"
         ref={drawerRef}
@@ -99,7 +96,7 @@ function Sidebar() {
           position: "fixed",
           left: 0,
           top: 0,
-          zIndex: 1040,
+          zIndex: 1250, // ABOVE the scrim so links are clickable
           padding: "2rem 0 1.5rem 0",
           background: "rgba(36,45,102,0.23)",
           borderRight: "2px solid rgba(210,222,230,0.08)",
@@ -181,49 +178,11 @@ function Sidebar() {
 
         {/* Socials */}
         <div className="d-flex flex-column align-items-center gap-2 mt-4">
-          <a
-            href="https://github.com/AryanilAD"
-            rel="noopener noreferrer"
-            target="_blank"
-            style={{
-              color: "#e8eaf2",
-              fontSize: 22,
-              width: 38,
-              height: 38,
-              borderRadius: "50%",
-              background: "rgba(245,245,245,0.17)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 1px 6px rgba(32,50,80,0.10)",
-              transition: "all 0.25s"
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "linear-gradient(135deg,#242d66 0%, #21cbf3 100%)"}
-            onMouseLeave={e => e.currentTarget.style.background = "rgba(245,245,245,0.17)"}
-          >
-            <i className="bi bi-github"></i>
+          <a href="https://github.com/AryanilAD" target="_blank" rel="noopener noreferrer">
+            <i className="bi bi-github" />
           </a>
-          <a
-            href="https://www.linkedin.com/in/aryanildey"
-            rel="noopener noreferrer"
-            target="_blank"
-            style={{
-              color: "#e8eaf2",
-              fontSize: 22,
-              width: 38,
-              height: 38,
-              borderRadius: "50%",
-              background: "rgba(245,245,245,0.17)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 1px 6px rgba(32,50,80,0.10)",
-              transition: "all 0.25s"
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "linear-gradient(135deg,#242d66 0%, #36d1c4 100%)"}
-            onMouseLeave={e => e.currentTarget.style.background = "rgba(245,245,245,0.17)"}
-          >
-            <i className="bi bi-linkedin"></i>
+          <a href="https://www.linkedin.com/in/aryanildey" target="_blank" rel="noopener noreferrer">
+            <i className="bi bi-linkedin" />
           </a>
         </div>
 
@@ -232,18 +191,12 @@ function Sidebar() {
             background: rgba(36,45,102,0.16);
             backdrop-filter: blur(13px) saturate(146%);
           }
-          /* Mobile styles */
           @media (max-width: 991px) {
             .sidebar-label { display: none !important; }
             .sidebar-toggle { display: flex !important; }
           }
-          /* Desktop and laptop styles */
           @media (min-width: 992px) {
-            /* Sidebar always visible, override transform state */
-            aside {
-              transform: translateX(0) !important;
-            }
-            /* Hide toggle button */
+            aside { transform: translateX(0) !important; }
             .sidebar-toggle { display: none !important; }
           }
         `}</style>
