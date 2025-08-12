@@ -1,4 +1,4 @@
-// components/Sidebar.jsx — robust hamburger toggle (mobile) + fixed on desktop
+// components/Sidebar.jsx — ensure close (X) retracts the drawer
 import React, { useEffect, useRef, useState } from "react";
 
 const navItems = [
@@ -16,13 +16,11 @@ function Sidebar() {
   const [open, setOpen] = useState(false);
   const drawerRef = useRef(null);
 
-  // Close on outside click (only when open)
+  // Close on outside click/tap
   useEffect(() => {
     const onTapOutside = (e) => {
       if (!open) return;
-      if (drawerRef.current && !drawerRef.current.contains(e.target)) {
-        setOpen(false);
-      }
+      if (drawerRef.current && !drawerRef.current.contains(e.target)) setOpen(false);
     };
     document.addEventListener("mousedown", onTapOutside);
     document.addEventListener("touchstart", onTapOutside, { passive: true });
@@ -32,20 +30,18 @@ function Sidebar() {
     };
   }, [open]);
 
-  // Lock body scroll when drawer open (mobile)
+  // Close on ESC
   useEffect(() => {
-    if (open) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = prev; };
-    }
-  }, [open]);
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const handleNavClick = () => setOpen(false);
 
   return (
     <>
-      {/* Floating hamburger — always rendered; hidden by CSS on desktop */}
+      {/* Toggle button (hamburger/X) — sits ABOVE everything and always toggles */}
       <button
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
@@ -56,7 +52,7 @@ function Sidebar() {
           position: "fixed",
           left: 14,
           top: 14,
-          zIndex: 1200,                 // ensure above scrim/overlay
+          zIndex: 1201, // higher than scrim and drawer
           width: 44,
           height: 44,
           borderRadius: 12,
@@ -69,27 +65,28 @@ function Sidebar() {
           alignItems: "center",
           justifyContent: "center",
           boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
-          cursor: "pointer"
+          cursor: "pointer",
+          pointerEvents: "auto" // make sure clicks are received even when scrim is visible
         }}
         className="sidebar-toggle"
       >
         <i className={`bi ${open ? "bi-x-lg" : "bi-list"}`} style={{ fontSize: 22, lineHeight: 0 }} />
       </button>
 
-      {/* Scrim behind drawer on mobile */}
+      {/* Scrim — receives clicks to close, but sits below the toggle button */}
       <div
         onClick={() => setOpen(false)}
         style={{
           position: "fixed",
           inset: 0,
-          zIndex: 1039,
+          zIndex: 1200,
           background: open ? "rgba(0,0,0,0.35)" : "transparent",
           pointerEvents: open ? "auto" : "none",
           transition: "background 200ms ease"
         }}
       />
 
-      {/* Sidebar drawer/fixed */}
+      {/* Drawer */}
       <aside
         id="mobile-sidebar"
         ref={drawerRef}
@@ -100,7 +97,7 @@ function Sidebar() {
           position: "fixed",
           left: 0,
           top: 0,
-          zIndex: 1040,
+          zIndex: 1200, // below the toggle button
           padding: "2rem 0 1.5rem 0",
           background: "rgba(36,45,102,0.23)",
           borderRight: "2px solid rgba(210,222,230,0.08)",
@@ -153,7 +150,6 @@ function Sidebar() {
                   filter: hovered === nav.id ? "drop-shadow(0 2px 10px rgba(40,144,255,0.12))" : "none"
                 }}
               />
-              {/* Hide label on mobile via CSS; keep for desktop accessibility */}
               <span
                 className="sidebar-label"
                 style={{
@@ -181,7 +177,6 @@ function Sidebar() {
           ))}
         </nav>
 
-        {/* Socials */}
         <div className="d-flex flex-column align-items-center gap-2 mt-4">
           <a
             href="https://github.com/AryanilAD"
@@ -235,16 +230,10 @@ function Sidebar() {
             backdrop-filter: blur(13px) saturate(146%);
           }
           /* Hide labels on small screens */
-          @media (max-width: 991px) {
-            .sidebar-label { display: none !important; }
-            /* Show drawer closed by default on mobile */
-            .sidebar-toggle { display: flex !important; }
-          }
-          /* On desktop, keep sidebar visible and hide toggle + scrim effect via transforms from parent */
-          @media (min-width: 992px) {
-            /* Keep toggle hidden on desktop */
-            .sidebar-toggle { display: none !important; }
-          }
+          @media (max-width: 991px) { .sidebar-label { display: none !important; } }
+          /* On desktop, keep sidebar visible and hide scrim via transforms from React state.
+             We still hide the toggle button with CSS. */
+          @media (min-width: 992px) { .sidebar-toggle { display: none !important; } }
         `}</style>
       </aside>
     </>
