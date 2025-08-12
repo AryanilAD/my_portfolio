@@ -1,4 +1,4 @@
-// components/Sidebar.jsx — retractable on mobile, fixed on desktop
+// components/Sidebar.jsx — robust hamburger toggle (mobile) + fixed on desktop
 import React, { useEffect, useRef, useState } from "react";
 
 const navItems = [
@@ -13,15 +13,10 @@ const navItems = [
 
 function Sidebar() {
   const [hovered, setHovered] = useState(null);
-  const [open, setOpen] = useState(false);          // mobile drawer state
+  const [open, setOpen] = useState(false);
   const drawerRef = useRef(null);
 
-  // Close drawer on route hash change or when a nav link is clicked
-  const handleNavClick = () => {
-    if (window.innerWidth < 992) setOpen(false);
-  };
-
-  // Close on outside tap (mobile)
+  // Close on outside click (only when open)
   useEffect(() => {
     const onTapOutside = (e) => {
       if (!open) return;
@@ -29,11 +24,15 @@ function Sidebar() {
         setOpen(false);
       }
     };
-    document.addEventListener("click", onTapOutside, { passive: true });
-    return () => document.removeEventListener("click", onTapOutside);
+    document.addEventListener("mousedown", onTapOutside);
+    document.addEventListener("touchstart", onTapOutside, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", onTapOutside);
+      document.removeEventListener("touchstart", onTapOutside);
+    };
   }, [open]);
 
-  // Lock body scroll when drawer is open
+  // Lock body scroll when drawer open (mobile)
   useEffect(() => {
     if (open) {
       const prev = document.body.style.overflow;
@@ -42,20 +41,22 @@ function Sidebar() {
     }
   }, [open]);
 
-  // Determine if desktop (>=992px)
-  const isDesktop = typeof window !== "undefined" ? window.innerWidth >= 992 : true;
+  const handleNavClick = () => setOpen(false);
 
   return (
     <>
-      {/* Floating toggle button — visible only on mobile */}
+      {/* Floating hamburger — always rendered; hidden by CSS on desktop */}
       <button
+        type="button"
         aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
+        aria-controls="mobile-sidebar"
         onClick={() => setOpen(v => !v)}
         style={{
           position: "fixed",
           left: 14,
           top: 14,
-          zIndex: 1100,
+          zIndex: 1200,                 // ensure above scrim/overlay
           width: 44,
           height: 44,
           borderRadius: 12,
@@ -64,31 +65,33 @@ function Sidebar() {
           color: "#e9f4ff",
           backdropFilter: "blur(10px)",
           WebkitBackdropFilter: "blur(10px)",
-          display: isDesktop ? "none" : "flex",
+          display: "flex",
           alignItems: "center",
           justifyContent: "center",
           boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
           cursor: "pointer"
         }}
+        className="sidebar-toggle"
       >
-        <i className={`bi ${open ? "bi-x-lg" : "bi-list"}`} style={{ fontSize: 22 }} />
+        <i className={`bi ${open ? "bi-x-lg" : "bi-list"}`} style={{ fontSize: 22, lineHeight: 0 }} />
       </button>
 
-      {/* Scrim behind drawer on mobile when open */}
-      {!isDesktop && open && (
-        <div
-          onClick={() => setOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 1039,
-            background: "rgba(0,0,0,0.35)"
-          }}
-        />
-      )}
+      {/* Scrim behind drawer on mobile */}
+      <div
+        onClick={() => setOpen(false)}
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 1039,
+          background: open ? "rgba(0,0,0,0.35)" : "transparent",
+          pointerEvents: open ? "auto" : "none",
+          transition: "background 200ms ease"
+        }}
+      />
 
-      {/* Sidebar: drawer on mobile, fixed on desktop */}
+      {/* Sidebar drawer/fixed */}
       <aside
+        id="mobile-sidebar"
         ref={drawerRef}
         className="d-flex flex-column align-items-center justify-content-between sidebar-glass"
         style={{
@@ -102,8 +105,7 @@ function Sidebar() {
           background: "rgba(36,45,102,0.23)",
           borderRight: "2px solid rgba(210,222,230,0.08)",
           backdropFilter: "blur(19px) saturate(160%)",
-          // Drawer behavior on mobile
-          transform: isDesktop ? "translateX(0)" : open ? "translateX(0)" : "translateX(-110%)",
+          transform: open ? "translateX(0)" : "translateX(-110%)",
           transition: "transform 280ms cubic-bezier(.22,.9,.26,1)"
         }}
       >
@@ -151,7 +153,9 @@ function Sidebar() {
                   filter: hovered === nav.id ? "drop-shadow(0 2px 10px rgba(40,144,255,0.12))" : "none"
                 }}
               />
+              {/* Hide label on mobile via CSS; keep for desktop accessibility */}
               <span
+                className="sidebar-label"
                 style={{
                   position: "absolute",
                   left: 58,
@@ -230,9 +234,16 @@ function Sidebar() {
             background: rgba(36,45,102,0.16);
             backdrop-filter: blur(13px) saturate(146%);
           }
-          /* Hide slide-out labels on mobile to save space */
+          /* Hide labels on small screens */
           @media (max-width: 991px) {
-            .sidebar-icon-link span { display: none !important; }
+            .sidebar-label { display: none !important; }
+            /* Show drawer closed by default on mobile */
+            .sidebar-toggle { display: flex !important; }
+          }
+          /* On desktop, keep sidebar visible and hide toggle + scrim effect via transforms from parent */
+          @media (min-width: 992px) {
+            /* Keep toggle hidden on desktop */
+            .sidebar-toggle { display: none !important; }
           }
         `}</style>
       </aside>
