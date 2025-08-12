@@ -80,7 +80,7 @@ function HeroSection() {
 
         {/* Resume button — glassy + hover animation */}
         <a
-          href="/assets/AD_Resume_25.pdf"
+          href="/assets/AD_Resume.pdf"
           className="cv-download-btn"
           target="_blank"
           rel="noopener noreferrer"
