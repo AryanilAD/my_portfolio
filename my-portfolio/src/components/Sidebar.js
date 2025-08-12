@@ -1,4 +1,4 @@
-// components/Sidebar.jsx — mobile click fix by resizing scrim
+// components/Sidebar.jsx — hover labels active for all device sizes
 import React, { useEffect, useRef, useState } from "react";
 
 const navItems = [
@@ -16,11 +16,12 @@ function Sidebar() {
   const [open, setOpen] = useState(false);
   const drawerRef = useRef(null);
 
-  // Close on outside click
   useEffect(() => {
     const onTapOutside = (e) => {
       if (!open) return;
-      if (drawerRef.current && !drawerRef.current.contains(e.target)) setOpen(false);
+      if (drawerRef.current && !drawerRef.current.contains(e.target)) {
+        setOpen(false);
+      }
     };
     document.addEventListener("mousedown", onTapOutside);
     document.addEventListener("touchstart", onTapOutside, { passive: true });
@@ -30,7 +31,6 @@ function Sidebar() {
     };
   }, [open]);
 
-  // Lock scroll on mobile when open
   useEffect(() => {
     if (open) {
       const prev = document.body.style.overflow;
@@ -61,6 +61,7 @@ function Sidebar() {
           background: "rgba(26,32,54,0.55)",
           color: "#e9f4ff",
           backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -71,13 +72,13 @@ function Sidebar() {
         <i className={`bi ${open ? "bi-x-lg" : "bi-list"}`} style={{ fontSize: 22 }} />
       </button>
 
-      {/* Scrim shifted to the right of the sidebar so it doesn't cover it */}
+      {/* Scrim shifted to right of sidebar */}
       <div
         onClick={() => setOpen(false)}
         style={{
           position: "fixed",
           top: 0,
-          left: 74, // start right after sidebar
+          left: 74,
           width: "calc(100% - 74px)",
           height: "100vh",
           zIndex: 1200,
@@ -90,13 +91,14 @@ function Sidebar() {
       {/* Sidebar */}
       <aside
         ref={drawerRef}
+        className="d-flex flex-column align-items-center justify-content-between sidebar-glass"
         style={{
           width: 74,
           height: "100vh",
           position: "fixed",
           left: 0,
           top: 0,
-          zIndex: 1250, // above scrim
+          zIndex: 1250,
           padding: "2rem 0 1.5rem",
           background: "rgba(36,45,102,0.23)",
           borderRight: "2px solid rgba(210,222,230,0.08)",
@@ -104,7 +106,6 @@ function Sidebar() {
           transform: open ? "translateX(0)" : "translateX(-110%)",
           transition: "transform 280ms cubic-bezier(.22,.9,.26,1)"
         }}
-        className="sidebar-glass"
       >
         <nav className="d-flex flex-column align-items-center gap-3" style={{ width: "100%" }}>
           {navItems.map((nav, idx) => (
@@ -120,7 +121,10 @@ function Sidebar() {
                 borderRadius: "50%",
                 background: "rgba(245,245,245,0.07)",
                 color: "#e1e6ef",
-                cursor: "pointer"
+                cursor: "pointer",
+                marginBottom: idx === navItems.length - 1 ? 0 : 2,
+                boxShadow: hovered === nav.id ? "0 0 16px 0.4px rgba(41,182,246,0.17)" : "0 1px 6px rgba(40,50,80,0.03)",
+                transition: "all 0.25s cubic-bezier(.45,1.35,.34,1.2)"
               }}
               onMouseEnter={() => setHovered(nav.id)}
               onMouseLeave={() => setHovered(null)}
@@ -131,24 +135,53 @@ function Sidebar() {
                   background: nav.gradient,
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  fontSize: 28
+                  fontSize: 28,
+                  transition: "transform 0.23s cubic-bezier(.47,1.52,.41,.98)",
+                  transform: hovered === nav.id ? "scale(1.19) rotate(-8deg)" : "scale(1) rotate(0)"
                 }}
               />
-              <span className="sidebar-label" style={{ display: "none" }}>{nav.label}</span>
+              <span
+                className="sidebar-label"
+                style={{
+                  position: "absolute",
+                  left: 58,
+                  top: "50%",
+                  background: "rgba(20,23,39,0.94)",
+                  color: "#fff",
+                  fontWeight: 500,
+                  fontSize: 15,
+                  letterSpacing: 0.4,
+                  padding: hovered === nav.id ? "7px 18px" : "7px 0",
+                  borderRadius: 7,
+                  opacity: hovered === nav.id ? 1 : 0,
+                  whiteSpace: "nowrap",
+                  pointerEvents: "none",
+                  transform: "translateY(-50%)",
+                  transition: "all 0.18s cubic-bezier(.87,0,.13,1)"
+                }}
+              >
+                {nav.label}
+              </span>
             </a>
           ))}
         </nav>
-      </aside>
 
-      <style>{`
-        @media (max-width: 991px) {
-          .sidebar-toggle { display: flex !important; }
-        }
-        @media (min-width: 992px) {
-          aside { transform: translateX(0) !important; }
-          .sidebar-toggle { display: none !important; }
-        }
-      `}</style>
+        <style>{`
+          .sidebar-glass {
+            background: rgba(36,45,102,0.16);
+            backdrop-filter: blur(13px) saturate(146%);
+          }
+          /* Toggle visible only on mobile */
+          @media (max-width: 991px) {
+            .sidebar-toggle { display: flex !important; }
+          }
+          /* On larger screens hide toggle, keep sidebar open */
+          @media (min-width: 992px) {
+            .sidebar-toggle { display: none !important; }
+            aside { transform: translateX(0) !important; }
+          }
+        `}</style>
+      </aside>
     </>
   );
 }
