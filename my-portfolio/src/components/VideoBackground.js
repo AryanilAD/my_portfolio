@@ -1,4 +1,4 @@
-// components/VideoBackground.jsx — mobile-proof fullscreen cover with overscan + zoom
+// components/VideoBackground.jsx — final hard lock (no right-side gap)
 
 import React, { useEffect, useRef, useState } from "react";
 
@@ -6,7 +6,7 @@ export default function VideoBackground() {
   const videoRef = useRef(null);
   const [needsPlayButton, setNeedsPlayButton] = useState(false);
 
-  // Dynamic viewport height: prefer 100dvh, fallback to JS var for older browsers
+  // Dynamic viewport height (mobile safe)
   useEffect(() => {
     const setVH = () => {
       const vh = window.innerHeight * 0.01;
@@ -51,14 +51,13 @@ export default function VideoBackground() {
 
   return (
     <>
-      {/* Fixed wrapper that always clips overflow */}
+      {/* Fullscreen fixed wrapper; clips any overflow */}
       <div
         aria-hidden="true"
         style={{
           position: "fixed",
           inset: 0,
           width: "100vw",
-          // prefer modern 100dvh; fallback to JS --vh
           height: "100dvh",
           height: "calc(var(--vh, 1vh) * 100)",
           overflow: "hidden",
@@ -66,7 +65,7 @@ export default function VideoBackground() {
           backgroundColor: "#000"
         }}
       >
-        {/* Background video with overscan to kill side gaps */}
+        {/* Video with aggressive overscan + center translate */}
         <video
           ref={videoRef}
           autoPlay
@@ -75,19 +74,19 @@ export default function VideoBackground() {
           playsInline
           preload="auto"
           poster="/assets/video/poster.jpg"
-          className="video-bg"
+          className="bg-video-lock"
         >
           <source src="/assets/bg.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
 
-        {/* Dark overlay above video, below content */}
+        {/* Dark overlay above video */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            pointerEvents: "none",
             zIndex: 1,
+            pointerEvents: "none",
             background:
               "linear-gradient(180deg, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.50) 45%, rgba(0,0,0,0.42) 100%)"
           }}
@@ -107,7 +106,7 @@ export default function VideoBackground() {
             borderRadius: 10,
             border: "1px solid rgba(255,255,255,0.35)",
             background: "rgba(20,30,48,0.35)",
-            color: "#e8f2ff)",
+            color: "#e8f2ff",
             backdropFilter: "blur(6px)",
             WebkitBackdropFilter: "blur(6px)",
             cursor: "pointer",
@@ -121,47 +120,48 @@ export default function VideoBackground() {
       )}
 
       <style>{`
-        html, body, #root { height: 100%; margin: 0; padding: 0; }
+        /* Prevent any horizontal scroll that could reveal edges */
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        #root { height: 100%; }
 
-        /* Core positioning + overscan + smooth zoom to hide any residual edges */
-        .video-bg {
+        /* Core lock: overscan + center translate + zoom */
+        .bg-video-lock {
           position: absolute;
           top: 50%;
           left: 50%;
-          transform: translate(-50%, -50%);
-          width: 120vw;                 /* overscan width */
-          height: 120dvh;               /* overscan height (modern) */
-          height: calc(var(--vh, 1vh) * 120); /* fallback overscan */
-          min-width: 120%;
-          min-height: 120%;
+          transform: translate(-50%, -50%) scale(1);
+          width: 140vw;                 /* heavy overscan to kill right/left gaps */
+          height: 140vh;                /* heavy overscan to kill top/bottom gaps */
+          min-width: 140%;
+          min-height: 140%;
           object-fit: cover !important;
           object-position: center center !important;
           pointer-events: none;
-          animation: zoomInBg 28s ease-in-out infinite alternate;
+          animation: bgZoom 32s ease-in-out infinite alternate;
         }
 
-        @keyframes zoomInBg {
+        @keyframes bgZoom {
           0%   { transform: translate(-50%, -50%) scale(1); }
-          100% { transform: translate(-50%, -50%) scale(1.08); }
+          100% { transform: translate(-50%, -50%) scale(1.06); }
         }
 
-        /* Extra safety for ultra-tall portrait phones */
+        /* Portrait extremes */
         @media (max-aspect-ratio: 9/16) {
-          .video-bg {
-            width: 130vw;
-            height: calc(var(--vh, 1vh) * 125);
-            min-width: 130%;
-            min-height: 125%;
+          .bg-video-lock {
+            width: 150vw;
+            height: 150vh;
+            min-width: 150%;
+            min-height: 150%;
           }
         }
 
-        /* Extra safety for ultra-wide landscape phones */
+        /* Landscape extremes */
         @media (min-aspect-ratio: 16/9) {
-          .video-bg {
-            width: 125vw;
-            height: calc(var(--vh, 1vh) * 125);
-            min-width: 125%;
-            min-height: 125%;
+          .bg-video-lock {
+            width: 150vw;
+            height: 150vh;
+            min-width: 150%;
+            min-height: 150%;
           }
         }
 
