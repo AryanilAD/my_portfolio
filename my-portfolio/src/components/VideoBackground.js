@@ -1,3 +1,4 @@
+// components/VideoBackground.jsx
 import React, { useEffect, useRef, useState } from "react";
 
 const baseVideoStyle = {
@@ -11,8 +12,7 @@ const baseVideoStyle = {
   objectPosition: "center center",
   zIndex: -2,
   pointerEvents: "none",
-  backgroundColor: "#000",
-  opacity: 0.78,
+  backgroundColor: "#000"
 };
 
 export default function VideoBackground() {
@@ -24,6 +24,7 @@ export default function VideoBackground() {
     if (!v) return;
     v.muted = true;
     v.playsInline = true;
+
     (async () => {
       try {
         await v.play();
@@ -54,9 +55,10 @@ export default function VideoBackground() {
         width: "100vw",
         height: "100vh",
         overflow: "hidden",
-        zIndex: -2,
+        zIndex: -2
       }}
     >
+      {/* Background video */}
       <video
         ref={videoRef}
         style={baseVideoStyle}
@@ -71,6 +73,18 @@ export default function VideoBackground() {
         Your browser does not support the video tag.
       </video>
 
+      {/* Dark overlay above video, below page content */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundColor: "rgba(0,0,0,0.45)", // adjust opacity here
+          zIndex: -1,
+          pointerEvents: "none"
+        }}
+      />
+
+      {/* Play button fallback if autoplay blocked */}
       {needsPlayButton && (
         <button
           onClick={handleManualPlay}
@@ -88,14 +102,14 @@ export default function VideoBackground() {
             WebkitBackdropFilter: "blur(6px)",
             cursor: "pointer",
             fontWeight: 600,
-            boxShadow: "0 6px 18px rgba(0,0,0,0.25)",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.25)"
           }}
-          aria-label="Play background video"
         >
           Play Background
         </button>
       )}
 
+      {/* Ensure correct sizing on mobile */}
       <style>{`
         @media (max-width: 768px) {
           video {
