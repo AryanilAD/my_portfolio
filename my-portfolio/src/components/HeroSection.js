@@ -44,14 +44,14 @@ function HeroSection() {
           Aryanil Dey
         </h1>
 
-        {/* Typewriter with underline */}
+        {/* Typewriter group (column so the button stays below) */}
         <div
           style={{
-            display: "inline-block",
-            position: "relative",
-            textAlign: "left",
-            marginBottom: 16,
-            marginLeft: 28
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            marginLeft: 28,
+            marginBottom: 8
           }}
         >
           <span
@@ -60,7 +60,8 @@ function HeroSection() {
               color: "#e0e6f0",
               fontWeight: 400,
               fontFamily: "'Poppins', Arial, sans-serif",
-              minHeight: "48px"
+              minHeight: "48px",
+              lineHeight: "1.3"
             }}
           >
             {text}
@@ -77,7 +78,7 @@ function HeroSection() {
           />
         </div>
 
-        {/* Resume button directly under typewriter */}
+        {/* Resume button — always below typewriter and above social icons */}
         <a
           href="/assets/AD_Resume_25.pdf"
           className="cv-download-btn"
@@ -88,7 +89,7 @@ function HeroSection() {
           style={{
             textDecoration: "none",
             marginLeft: 28,
-            marginTop: 8,
+            marginTop: 6,
             display: "inline-flex",
             alignItems: "center",
             gap: 10,
@@ -115,7 +116,7 @@ function HeroSection() {
           <span>Resume</span>
         </a>
 
-        {/* Social Icons - Solid White with Hover Animation */}
+        {/* Social Icons */}
         <div
           style={{
             fontSize: 0,
