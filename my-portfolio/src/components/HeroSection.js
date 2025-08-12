@@ -78,7 +78,7 @@ function HeroSection() {
           />
         </div>
 
-        {/* Resume button — always below typewriter and above social icons */}
+        {/* Resume button — glassy + hover animation */}
         <a
           href="/assets/AD_Resume_25.pdf"
           className="cv-download-btn"
@@ -87,32 +87,52 @@ function HeroSection() {
           download
           tabIndex={0}
           style={{
+            position: "relative",
             textDecoration: "none",
             marginLeft: 28,
             marginTop: 6,
             display: "inline-flex",
             alignItems: "center",
             gap: 10,
-            background: "linear-gradient(135deg, #2aa6e8 0%, #29B6F6 100%)",
-            color: "#0b172a",
-            padding: "10px 16px",
-            borderRadius: 10,
+            padding: "12px 18px",
+            borderRadius: 14,
             fontWeight: 700,
-            boxShadow: "0 6px 20px rgba(41,182,246,0.28)",
-            transition: "transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease"
+            color: "#e9f4ff",
+            background: "linear-gradient(135deg, rgba(41,182,246,0.14), rgba(65,183,255,0.10))",
+            border: "1px solid rgba(255,255,255,0.22)",
+            boxShadow: "0 10px 30px rgba(10, 22, 40, 0.20), inset 0 1px 0 rgba(255,255,255,0.12)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            overflow: "hidden",
+            transition: "transform 0.18s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease, filter 0.25s ease"
           }}
           onMouseOver={(e) => {
-            e.currentTarget.style.transform = "translateY(-1px)";
-            e.currentTarget.style.boxShadow = "0 10px 24px rgba(41,182,246,0.35)";
-            e.currentTarget.style.filter = "brightness(1.03)";
+            e.currentTarget.style.transform = "translateY(-2px)";
+            e.currentTarget.style.boxShadow = "0 16px 38px rgba(41,182,246,0.30), inset 0 1px 0 rgba(255,255,255,0.18)";
+            e.currentTarget.style.background = "linear-gradient(135deg, rgba(41,182,246,0.22), rgba(65,183,255,0.16))";
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.32)";
           }}
           onMouseOut={(e) => {
             e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.boxShadow = "0 6px 20px rgba(41,182,246,0.28)";
-            e.currentTarget.style.filter = "none";
+            e.currentTarget.style.boxShadow = "0 10px 30px rgba(10, 22, 40, 0.20), inset 0 1px 0 rgba(255,255,255,0.12)";
+            e.currentTarget.style.background = "linear-gradient(135deg, rgba(41,182,246,0.14), rgba(65,183,255,0.10))";
+            e.currentTarget.style.borderColor = "rgba(255,255,255,0.22)";
           }}
         >
-          <i className="bi bi-file-earmark-arrow-down" style={{ fontSize: 20, color: "#0b172a" }} />
+          {/* subtle moving highlight */}
+          <span
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "-120%",
+              height: "100%",
+              width: "120%",
+              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent)",
+              transform: "skewX(-20deg)"
+            }}
+          />
+          <i className="bi bi-file-earmark-arrow-down" style={{ fontSize: 20, color: "#e9f4ff" }} />
           <span>Resume</span>
         </a>
 
