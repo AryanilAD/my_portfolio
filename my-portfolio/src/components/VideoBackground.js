@@ -1,21 +1,27 @@
-// components/VideoBackground.jsx
+// components/VideoBackground.jsx — eliminates right-side gap on all phones/tablets
+
 import React, { useEffect, useRef, useState } from "react";
 
 export default function VideoBackground() {
   const videoRef = useRef(null);
   const [needsPlayButton, setNeedsPlayButton] = useState(false);
 
+  // Dynamic viewport height to handle mobile toolbars (iOS/Android)
   useEffect(() => {
-    // iOS/Android mobile 100dvh fix: update CSS var on resize
     const setVH = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
     };
     setVH();
     window.addEventListener("resize", setVH);
-    return () => window.removeEventListener("resize", setVH);
+    window.addEventListener("orientationchange", setVH);
+    return () => {
+      window.removeEventListener("resize", setVH);
+      window.removeEventListener("orientationchange", setVH);
+    };
   }, []);
 
+  // Autoplay handling
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -45,20 +51,20 @@ export default function VideoBackground() {
 
   return (
     <>
-      {/* Fixed wrapper that always matches viewport and clips overflow */}
+      {/* Fixed wrapper covers viewport and clips any overflow so no white edge appears */}
       <div
         aria-hidden="true"
         style={{
           position: "fixed",
           inset: 0,
           width: "100vw",
-          // Use dynamic viewport height to avoid gaps behind mobile toolbars
           height: "calc(var(--vh, 1vh) * 100)",
           overflow: "hidden",
           zIndex: -2,
           backgroundColor: "#000"
         }}
       >
+        {/* Video centered; add slight overscan to avoid right/left slivers */}
         <video
           ref={videoRef}
           autoPlay
@@ -73,13 +79,13 @@ export default function VideoBackground() {
             left: "50%",
             transform: "translate(-50%, -50%)",
             // Base fill
-            width: "100vw",
-            height: "calc(var(--vh, 1vh) * 100)",
+            width: "102vw",                     // overscan to kill right-side gap
+            height: "calc(var(--vh, 1vh) * 102)", // slight height overscan, too
             objectFit: "cover",
-            objectPosition: "center",
-            // Extra safety in case device ignores object-fit initially
-            minWidth: "100%",
-            minHeight: "100%",
+            objectPosition: "center center",
+            // Safety for devices that ignore object-fit initially
+            minWidth: "102%",
+            minHeight: "102%",
             pointerEvents: "none"
           }}
         >
@@ -92,14 +98,15 @@ export default function VideoBackground() {
           style={{
             position: "absolute",
             inset: 0,
-            zIndex: 1,
             pointerEvents: "none",
+            zIndex: 1,
             background:
               "linear-gradient(180deg, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.50) 45%, rgba(0,0,0,0.42) 100%)"
           }}
         />
       </div>
 
+      {/* Autoplay fallback only if required by browser policy */}
       {needsPlayButton && (
         <button
           onClick={handleManualPlay}
@@ -125,41 +132,35 @@ export default function VideoBackground() {
         </button>
       )}
 
+      {/* Hardening rules to keep coverage across extreme aspect ratios and mobile UI shifts */}
       <style>{`
-        /* Ensure root can accommodate our fixed layers */
-        html, body, #root {
-          height: 100%;
-        }
+        html, body, #root { height: 100%; }
 
-        /* Enforce cover regardless of aspect ratio */
         @supports (object-fit: cover) {
-          video {
-            object-fit: cover !important;
-            object-position: center center !important;
-          }
+          video { object-fit: cover !important; object-position: center center !important; }
         }
 
-        /* Handle extreme tall screens (portrait phones) */
+        /* Portrait extremes (very tall phones) */
         @media (max-aspect-ratio: 9/16) {
           video {
-            width: calc(var(--vh, 1vh) * 100) !important; /* tie width to height to avoid side gaps */
-            height: calc(var(--vh, 1vh) * 100) !important;
-            min-width: 100% !important;
-            min-height: 100% !important;
+            width: 110vw !important;                     /* extra overscan */
+            height: calc(var(--vh, 1vh) * 110) !important;
+            min-width: 110% !important;
+            min-height: 110% !important;
           }
         }
 
-        /* Handle extreme wide screens (landscape phones) */
+        /* Landscape extremes (very wide) */
         @media (min-aspect-ratio: 16/9) {
           video {
-            width: 100vw !important;
-            height: 100vw !important;
-            min-width: 100% !important;
-            min-height: 100% !important;
+            width: 110vw !important;
+            height: 110vh !important;
+            min-width: 110% !important;
+            min-height: 110% !important;
           }
         }
 
-        /* iOS Safari toolbar shrink/expand */
+        /* iOS Safari dynamic toolbar fix */
         @media (max-width: 1024px) {
           body { min-height: calc(var(--vh, 1vh) * 100); }
         }
