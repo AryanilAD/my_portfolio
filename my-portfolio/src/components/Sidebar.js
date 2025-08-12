@@ -1,4 +1,5 @@
-// components/Sidebar.jsx — ensure close (X) retracts the drawer
+// components/Sidebar.jsx — always visible sidebar on desktop/laptop, retractable on mobile
+
 import React, { useEffect, useRef, useState } from "react";
 
 const navItems = [
@@ -16,7 +17,6 @@ function Sidebar() {
   const [open, setOpen] = useState(false);
   const drawerRef = useRef(null);
 
-  // Close on outside click/tap
   useEffect(() => {
     const onTapOutside = (e) => {
       if (!open) return;
@@ -30,18 +30,21 @@ function Sidebar() {
     };
   }, [open]);
 
-  // Close on ESC
   useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+    if (open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [open]);
 
   const handleNavClick = () => setOpen(false);
 
   return (
     <>
-      {/* Toggle button (hamburger/X) — sits ABOVE everything and always toggles */}
+      {/* Toggle button visible only on mobile */}
       <button
         type="button"
         aria-label={open ? "Close menu" : "Open menu"}
@@ -52,7 +55,7 @@ function Sidebar() {
           position: "fixed",
           left: 14,
           top: 14,
-          zIndex: 1201, // higher than scrim and drawer
+          zIndex: 1201,
           width: 44,
           height: 44,
           borderRadius: 12,
@@ -65,15 +68,14 @@ function Sidebar() {
           alignItems: "center",
           justifyContent: "center",
           boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
-          cursor: "pointer",
-          pointerEvents: "auto" // make sure clicks are received even when scrim is visible
+          cursor: "pointer"
         }}
         className="sidebar-toggle"
       >
         <i className={`bi ${open ? "bi-x-lg" : "bi-list"}`} style={{ fontSize: 22, lineHeight: 0 }} />
       </button>
 
-      {/* Scrim — receives clicks to close, but sits below the toggle button */}
+      {/* Scrim on mobile */}
       <div
         onClick={() => setOpen(false)}
         style={{
@@ -86,7 +88,7 @@ function Sidebar() {
         }}
       />
 
-      {/* Drawer */}
+      {/* Sidebar drawer on mobile, always visible on desktop/laptop */}
       <aside
         id="mobile-sidebar"
         ref={drawerRef}
@@ -97,7 +99,7 @@ function Sidebar() {
           position: "fixed",
           left: 0,
           top: 0,
-          zIndex: 1200, // below the toggle button
+          zIndex: 1040,
           padding: "2rem 0 1.5rem 0",
           background: "rgba(36,45,102,0.23)",
           borderRight: "2px solid rgba(210,222,230,0.08)",
@@ -177,6 +179,7 @@ function Sidebar() {
           ))}
         </nav>
 
+        {/* Socials */}
         <div className="d-flex flex-column align-items-center gap-2 mt-4">
           <a
             href="https://github.com/AryanilAD"
@@ -229,11 +232,20 @@ function Sidebar() {
             background: rgba(36,45,102,0.16);
             backdrop-filter: blur(13px) saturate(146%);
           }
-          /* Hide labels on small screens */
-          @media (max-width: 991px) { .sidebar-label { display: none !important; } }
-          /* On desktop, keep sidebar visible and hide scrim via transforms from React state.
-             We still hide the toggle button with CSS. */
-          @media (min-width: 992px) { .sidebar-toggle { display: none !important; } }
+          /* Mobile styles */
+          @media (max-width: 991px) {
+            .sidebar-label { display: none !important; }
+            .sidebar-toggle { display: flex !important; }
+          }
+          /* Desktop and laptop styles */
+          @media (min-width: 992px) {
+            /* Sidebar always visible, override transform state */
+            aside {
+              transform: translateX(0) !important;
+            }
+            /* Hide toggle button */
+            .sidebar-toggle { display: none !important; }
+          }
         `}</style>
       </aside>
     </>
