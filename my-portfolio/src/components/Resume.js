@@ -70,10 +70,12 @@ function getMergedIntervals(experiences) {
   periods.sort((a, b) => a[0] - b[0]);
   const merged = [];
   for (const [start, end] of periods) {
-    if (!merged.length || merged[merged.length-1][1] < start) {
+    if (!merged.length || merged[merged.length - 1][1] < start) {
       merged.push([start, end]);
     } else {
-      merged[merged.length-1][1] = new Date(Math.max(merged[merged.length-1][1], end));
+      merged[merged.length - 1][1] = new Date(
+        Math.max(merged[merged.length - 1][1], end)
+      );
     }
   }
   return merged;
@@ -82,9 +84,13 @@ function totalExperienceString(experiences) {
   const intervals = getMergedIntervals(experiences);
   let months = 0;
   for (const [start, end] of intervals) {
-    months += (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()) + 1;
+    months +=
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth()) +
+      1;
   }
-  const y = Math.floor(months / 12), m = months % 12;
+  const y = Math.floor(months / 12),
+    m = months % 12;
   let parts = [];
   if (y) parts.push(`${y} yr${y > 1 ? "s" : ""}`);
   if (m) parts.push(`${m} mo${m > 1 ? "s" : ""}`);
@@ -96,7 +102,9 @@ function FormatSkills({ skills }) {
   return (
     <div style={{ marginTop: 6, fontSize: "0.98rem", fontWeight: 700 }}>
       <span style={{ color: "#ffc85a" }}>Skills:</span>{" "}
-      <span style={{ color: "#e6f6fb", fontWeight: 600 }}>{skills.join(", ")}</span>
+      <span style={{ color: "#e6f6fb", fontWeight: 600 }}>
+        {skills.join(", ")}
+      </span>
     </div>
   );
 }
@@ -104,59 +112,53 @@ function FormatSkills({ skills }) {
 // Group array into rows of two
 function chunk(arr, size) {
   const out = [];
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i+size));
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
   return out;
 }
 
-function Resume() {
-  useEffect(() => { AOS.init({ duration: 800, once: true }); }, []);
+function ProfessionalExperience() {
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
   // Newest at top, two per row
   const pairs = chunk([...experiences].reverse(), 2);
 
   return (
-    <section id="resume" className="container py-5" data-aos="fade-up">
-      {/* Responsive Download CV Button */}
-
-      <h2 className="fw-bold mb-4">Resume</h2>
-      <a
-        href="/assets/AD_Resume_25.pdf"
-        className="cv-download-btn"
-        target="_blank"
-        rel="noopener noreferrer"
-        download
-        tabIndex={0}
-        style={{textDecoration: "none", marginBottom: "5px"}}
-      >
-        <i className="bi bi-file-earmark-arrow-down me-2"></i>
-        Resume
-      </a>
-      <h3 className="mt-5 mb-3 fw-bold">
-        Professional Experience
-        <br />
-        <span style={{
-          display: "inline-block",
+    <section
+      id="professional-experience"
+      className="container py-5"
+      data-aos="fade-up"
+    >
+      <h2 className="fw-bold mb-4">Professional Experience</h2>
+      <div
+        style={{
           fontWeight: 500,
           fontSize: "1rem",
-          color: "#b6e1fc"
-        }}>
-          <h5>Total Experience:&nbsp;{totalExperienceString(experiences)}</h5>
-        </span>
-      </h3>
-      <div style={{
-        maxWidth: 820, margin: "0 auto", position: "relative"
-      }}>
+          color: "#b6e1fc",
+          marginBottom: "20px"
+        }}
+      >
+        <h5>Total Experience:&nbsp;{totalExperienceString(experiences)}</h5>
+      </div>
+
+      <div style={{ maxWidth: 820, margin: "0 auto", position: "relative" }}>
         {pairs.map((pair, idx) => (
-          <div key={idx} style={{
-            display: "flex", 
-            gap: 20,
-            marginBottom: "42px",
-            justifyContent: "center",
-          }}>
+          <div
+            key={idx}
+            style={{
+              display: "flex",
+              gap: 20,
+              marginBottom: "42px",
+              justifyContent: "center"
+            }}
+          >
             {pair.map((exp, colIdx) => (
-              <div key={colIdx}
+              <div
+                key={colIdx}
                 style={{
                   flex: 1,
-                  background: "linear-gradient(135deg, #22314b 0%, #3f5870 100%)",
+                  background:
+                    "linear-gradient(135deg, #22314b 0%, #3f5870 100%)",
                   borderRadius: 18,
                   boxShadow: "0 5px 20px 0 rgba(33,58,110,0.10)",
                   color: "#e2e8ef",
@@ -167,23 +169,47 @@ function Resume() {
                   fontSize: ".99rem"
                 }}
               >
-                <div style={{ fontWeight: 800, color: "#fff", fontSize:"1.09rem", marginBottom: 2 }}>{exp.title}</div>
-                <div style={{ fontWeight: 600, color: "#bbd8fd" }}>{exp.role}</div>
-                <div style={{ fontWeight: 700, color: "#bfdafe" }}>{exp.location}</div>
-                <div style={{ fontWeight: 700, fontSize: ".98rem", color: "#bfdafe", marginBottom: 4 }}>{exp.period}</div>
+                <div
+                  style={{
+                    fontWeight: 800,
+                    color: "#fff",
+                    fontSize: "1.09rem",
+                    marginBottom: 2
+                  }}
+                >
+                  {exp.title}
+                </div>
+                <div style={{ fontWeight: 600, color: "#bbd8fd" }}>
+                  {exp.role}
+                </div>
+                <div style={{ fontWeight: 700, color: "#bfdafe" }}>
+                  {exp.location}
+                </div>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    fontSize: ".98rem",
+                    color: "#bfdafe",
+                    marginBottom: 4
+                  }}
+                >
+                  {exp.period}
+                </div>
                 {exp.desc && exp.desc.length > 0 && (
-                  <ul style={{ margin:"7px 0 2px 0", paddingLeft: 17 }}>
-                    {exp.desc.map((txt,j) =>
-                      <li key={j} style={{ fontSize: ".96rem" }}>{txt}</li>
-                    )}
+                  <ul style={{ margin: "7px 0 2px 0", paddingLeft: 17 }}>
+                    {exp.desc.map((txt, j) => (
+                      <li key={j} style={{ fontSize: ".96rem" }}>
+                        {txt}
+                      </li>
+                    ))}
                   </ul>
                 )}
-                <FormatSkills skills={exp.skills}/>
+                <FormatSkills skills={exp.skills} />
               </div>
             ))}
-            {pair.length === 1 &&
+            {pair.length === 1 && (
               <div style={{ flex: 1, minWidth: 320, maxWidth: 406 }} />
-            }
+            )}
           </div>
         ))}
       </div>
@@ -191,4 +217,4 @@ function Resume() {
   );
 }
 
-export default Resume;
+export default ProfessionalExperience;
