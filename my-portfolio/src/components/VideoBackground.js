@@ -1,20 +1,6 @@
 // components/VideoBackground.jsx
 import React, { useEffect, useRef, useState } from "react";
 
-const baseVideoStyle = {
-  position: "fixed",
-  top: "50%",
-  left: "50%",
-  width: "100vw",
-  height: "100vh",
-  transform: "translate(-50%, -50%)",
-  objectFit: "cover",
-  objectPosition: "center center",
-  zIndex: -2,
-  pointerEvents: "none",
-  backgroundColor: "#000"
-};
-
 export default function VideoBackground() {
   const videoRef = useRef(null);
   const [needsPlayButton, setNeedsPlayButton] = useState(false);
@@ -48,50 +34,56 @@ export default function VideoBackground() {
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        width: "100vw",
-        height: "100vh",
-        overflow: "hidden",
-        zIndex: -2
-      }}
-    >
-      {/* Background video */}
+    <>
+      {/* Video layer */}
       <video
         ref={videoRef}
-        style={baseVideoStyle}
         autoPlay
         muted
         loop
         playsInline
         preload="auto"
         poster="/assets/video/poster.jpg"
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "100vw",
+          height: "100vh",
+          objectFit: "cover",          // fill any phone aspect ratio without distortion
+          objectPosition: "center",    // center crop
+          zIndex: -2,
+          pointerEvents: "none",
+          backgroundColor: "#000"
+        }}
       >
         <source src="/assets/bg.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
-      {/* Dark overlay above video, below page content */}
+      {/* Dark overlay above video, below content */}
       <div
+        aria-hidden="true"
         style={{
           position: "fixed",
           inset: 0,
-          backgroundColor: "rgba(0,0,0,0.45)", // adjust opacity here
           zIndex: -1,
-          pointerEvents: "none"
+          pointerEvents: "none",
+          // Subtle gradient for readability; adjust opacities if needed
+          background:
+            "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.46) 45%, rgba(0,0,0,0.40) 100%)"
         }}
       />
 
-      {/* Play button fallback if autoplay blocked */}
+      {/* Autoplay fallback (appears only if autoplay blocked) */}
       {needsPlayButton && (
         <button
           onClick={handleManualPlay}
           style={{
             position: "fixed",
-            bottom: 24,
-            right: 24,
+            bottom: 20,
+            right: 20,
             zIndex: 5,
             padding: "10px 14px",
             borderRadius: 10,
@@ -104,14 +96,16 @@ export default function VideoBackground() {
             fontWeight: 600,
             boxShadow: "0 6px 18px rgba(0,0,0,0.25)"
           }}
+          aria-label="Play background video"
         >
           Play Background
         </button>
       )}
 
-      {/* Ensure correct sizing on mobile */}
+      {/* Mobile/tablet hardening to handle extreme aspect ratios */}
       <style>{`
-        @media (max-width: 768px) {
+        @supports (object-fit: cover) {
+          /* Ensure all devices keep full-viewport cover */
           video {
             width: 100vw !important;
             height: 100vh !important;
@@ -119,7 +113,17 @@ export default function VideoBackground() {
             object-position: center center !important;
           }
         }
+
+        /* iOS Safari viewport quirks fix */
+        @media (max-width: 768px) {
+          html, body {
+            height: 100%;
+          }
+          body {
+            min-height: 100vh;
+          }
+        }
       `}</style>
-    </div>
+    </>
   );
 }
