@@ -13,6 +13,7 @@ const baseVideoStyle = {
   zIndex: -2,
   pointerEvents: "none",
   backgroundColor: "#000"
+  opacity: 0.45
 };
 
 export default function VideoBackground() {
