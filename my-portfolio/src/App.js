@@ -33,7 +33,7 @@ function App() {
         <About />
         <Skills />
         <Projects />
-        <Resume />
+        <ProfessionalExperience />
         <Education />
         <Hobbies />
         <Contact />
