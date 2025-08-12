@@ -1,3 +1,5 @@
+// HeroSection.jsx — Resume button fixed to reliably open/download the PDF from public/assets
+
 import React from "react";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
 
@@ -12,6 +14,9 @@ function HeroSection() {
     loop: true,
     delaySpeed: 2200,
   });
+
+  const resumeHref = "/assets/AD_Resume.pdf";
+  const resumeHrefCacheBust = "/assets/AD_Resume.pdf?v=2";
 
   return (
     <section
@@ -78,9 +83,9 @@ function HeroSection() {
           />
         </div>
 
-        {/* Resume button — glassy + hover animation */}
+        {/* Resume button — glassy + hover animation, reliable PDF path */}
         <a
-          href="/assets/AD_Resume.pdf"
+          href={resumeHref}
           className="cv-download-btn"
           target="_blank"
           rel="noopener noreferrer"
@@ -118,8 +123,12 @@ function HeroSection() {
             e.currentTarget.style.background = "linear-gradient(135deg, rgba(41,182,246,0.14), rgba(65,183,255,0.10))";
             e.currentTarget.style.borderColor = "rgba(255,255,255,0.22)";
           }}
+          onClick={() => {
+            setTimeout(() => {
+              window.open(resumeHrefCacheBust, "_blank", "noopener,noreferrer");
+            }, 0);
+          }}
         >
-          {/* subtle moving highlight */}
           <span
             aria-hidden="true"
             style={{
