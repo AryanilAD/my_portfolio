@@ -1,11 +1,12 @@
-// components/VideoBackground.jsx — fullscreen cover + smooth zoom-in animation effect
+// components/VideoBackground.jsx — mobile-proof fullscreen cover with overscan + zoom
+
 import React, { useEffect, useRef, useState } from "react";
 
 export default function VideoBackground() {
   const videoRef = useRef(null);
   const [needsPlayButton, setNeedsPlayButton] = useState(false);
 
-  // Dynamic vh fix
+  // Dynamic viewport height: prefer 100dvh, fallback to JS var for older browsers
   useEffect(() => {
     const setVH = () => {
       const vh = window.innerHeight * 0.01;
@@ -20,7 +21,7 @@ export default function VideoBackground() {
     };
   }, []);
 
-  // Autoplay try
+  // Autoplay handling
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -50,18 +51,22 @@ export default function VideoBackground() {
 
   return (
     <>
+      {/* Fixed wrapper that always clips overflow */}
       <div
         aria-hidden="true"
         style={{
           position: "fixed",
           inset: 0,
           width: "100vw",
+          // prefer modern 100dvh; fallback to JS --vh
+          height: "100dvh",
           height: "calc(var(--vh, 1vh) * 100)",
           overflow: "hidden",
           zIndex: -2,
           backgroundColor: "#000"
         }}
       >
+        {/* Background video with overscan to kill side gaps */}
         <video
           ref={videoRef}
           autoPlay
@@ -76,6 +81,7 @@ export default function VideoBackground() {
           Your browser does not support the video tag.
         </video>
 
+        {/* Dark overlay above video, below content */}
         <div
           style={{
             position: "absolute",
@@ -88,6 +94,7 @@ export default function VideoBackground() {
         />
       </div>
 
+      {/* Autoplay fallback */}
       {needsPlayButton && (
         <button
           onClick={handleManualPlay}
@@ -100,13 +107,14 @@ export default function VideoBackground() {
             borderRadius: 10,
             border: "1px solid rgba(255,255,255,0.35)",
             background: "rgba(20,30,48,0.35)",
-            color: "#e8f2ff",
+            color: "#e8f2ff)",
             backdropFilter: "blur(6px)",
             WebkitBackdropFilter: "blur(6px)",
             cursor: "pointer",
             fontWeight: 600,
             boxShadow: "0 6px 18px rgba(0,0,0,0.25)"
           }}
+          aria-label="Play background video"
         >
           Play Background
         </button>
@@ -115,33 +123,49 @@ export default function VideoBackground() {
       <style>{`
         html, body, #root { height: 100%; margin: 0; padding: 0; }
 
+        /* Core positioning + overscan + smooth zoom to hide any residual edges */
         .video-bg {
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          width: 115vw;
-          height: 115vh;
-          min-width: 115%;
-          min-height: 115%;
+          width: 120vw;                 /* overscan width */
+          height: 120dvh;               /* overscan height (modern) */
+          height: calc(var(--vh, 1vh) * 120); /* fallback overscan */
+          min-width: 120%;
+          min-height: 120%;
           object-fit: cover !important;
           object-position: center center !important;
           pointer-events: none;
-          animation: zoomIn 30s ease-in-out infinite alternate;
+          animation: zoomInBg 28s ease-in-out infinite alternate;
         }
 
-        @keyframes zoomIn {
-          0% { transform: translate(-50%, -50%) scale(1); }
-          100% { transform: translate(-50%, -50%) scale(1.1); }
+        @keyframes zoomInBg {
+          0%   { transform: translate(-50%, -50%) scale(1); }
+          100% { transform: translate(-50%, -50%) scale(1.08); }
         }
 
+        /* Extra safety for ultra-tall portrait phones */
         @media (max-aspect-ratio: 9/16) {
-          .video-bg { width: 125vw; height: 115vh; }
-        }
-        @media (min-aspect-ratio: 16/9) {
-          .video-bg { width: 115vw; height: 125vh; }
+          .video-bg {
+            width: 130vw;
+            height: calc(var(--vh, 1vh) * 125);
+            min-width: 130%;
+            min-height: 125%;
+          }
         }
 
+        /* Extra safety for ultra-wide landscape phones */
+        @media (min-aspect-ratio: 16/9) {
+          .video-bg {
+            width: 125vw;
+            height: calc(var(--vh, 1vh) * 125);
+            min-width: 125%;
+            min-height: 125%;
+          }
+        }
+
+        /* iOS/Android dynamic toolbar support */
         @media (max-width: 1024px) {
           body { min-height: calc(var(--vh, 1vh) * 100); }
         }
