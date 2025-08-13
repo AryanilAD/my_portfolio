@@ -1,4 +1,4 @@
-// HeroSection.jsx — hero video with blue glow hover/tap animation
+// HeroSection.jsx — bigger video frame + light blue glow + curved corners
 
 import React from "react";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
@@ -18,7 +18,7 @@ function HeroSection() {
   const resumeHref = "/assets/AD_Resume.pdf";
   const resumeHrefCacheBust = "/assets/AD_Resume.pdf?v=2";
 
-  // Replace with your GIF/video dimensions
+  // Set to your actual GIF/video dimensions (example: 640x360 → 16:9)
   const GIF_WIDTH = 640;
   const GIF_HEIGHT = 360;
   const GIF_ASPECT = GIF_WIDTH / GIF_HEIGHT;
@@ -34,10 +34,10 @@ function HeroSection() {
         alignItems: "center",
         padding: "0 5vw",
         background: "transparent",
-        gap: 24
+        gap: 28
       }}
     >
-      {/* Left side */}
+      {/* Left side: text */}
       <div style={{ flex: 1, maxWidth: 540 }}>
         <h1
           style={{
@@ -55,6 +55,7 @@ function HeroSection() {
           Aryanil Dey
         </h1>
 
+        {/* Typewriter */}
         <div
           style={{
             display: "flex",
@@ -150,7 +151,7 @@ function HeroSection() {
           <span>Resume</span>
         </a>
 
-        {/* Socials (keep your existing GitHub/LinkedIn block) */}
+        {/* Socials */}
         <div
           style={{
             fontSize: 0,
@@ -222,25 +223,28 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* Right side: rectangular video with blue glow hover */}
+      {/* Right side: bigger video with light blue glow + curved corners */}
       <div
         className="hero-video-frame glow-hover"
         tabIndex={0}
         style={{
-          width: 420,
+          // Bigger base size
+          width: 480,                                // was 420 → increased
           aspectRatio: GIF_ASPECT,
-          height: `calc(420px / ${GIF_ASPECT})`,
-          borderRadius: 0,
+          height: `calc(480px / ${GIF_ASPECT})`,
+          borderRadius: 18,                          // curved corners
           overflow: "hidden",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
-          background: "#000",
+          // Persistent subtle blue glow + base shadow
+          boxShadow:
+            "0 22px 70px rgba(0,0,0,0.38), 0 0 0 1px rgba(41,182,246,0.18), 0 0 24px rgba(41,182,246,0.22)",
+          background: "#0a0f1a",
           flexShrink: 0,
           display: "block",
           position: "relative",
           transition: "transform 220ms ease, box-shadow 220ms ease, filter 220ms ease"
         }}
       >
-        {/* subtle inner gradient ring for glow */}
+        {/* subtle inner ring to enhance glow */}
         <span
           aria-hidden="true"
           className="glow-ring"
@@ -248,9 +252,10 @@ function HeroSection() {
             position: "absolute",
             inset: 0,
             pointerEvents: "none",
-            background: "radial-gradient(120% 120% at 50% 50%, rgba(41,182,246,0) 55%, rgba(41,182,246,0.18) 85%, rgba(41,182,246,0) 100%)",
-            opacity: 0,
-            transition: "opacity 220ms ease"
+            borderRadius: 18,
+            background:
+              "radial-gradient(120% 120% at 50% 50%, rgba(41,182,246,0) 55%, rgba(41,182,246,0.16) 85%, rgba(41,182,246,0) 100%)",
+            opacity: 0.65    // visible even when not hovered (light glow)
           }}
         />
         <video
@@ -267,6 +272,7 @@ function HeroSection() {
             objectFit: "cover",
             display: "block",
             backgroundColor: "#000",
+            borderRadius: 18,
             transition: "transform 220ms ease, filter 220ms ease"
           }}
         >
@@ -275,39 +281,40 @@ function HeroSection() {
       </div>
 
       <style>{`
-        /* Hover/tap glow effect */
+        /* Hover/focus intensifies glow and adds slight lift */
         .glow-hover:hover,
         .glow-hover:focus {
-          transform: translateY(-2px) scale(1.015);
-          box-shadow: 0 24px 70px rgba(0,0,0,0.40), 0 0 0 2px rgba(41,182,246,0.20), 0 0 22px rgba(41,182,246,0.30);
+          transform: translateY(-2px) scale(1.018);
+          box-shadow:
+            0 28px 84px rgba(0,0,0,0.42),
+            0 0 0 2px rgba(41,182,246,0.24),
+            0 0 30px rgba(41,182,246,0.34);
           outline: none;
-        }
-        .glow-hover:hover .glow-ring,
-        .glow-hover:focus .glow-ring {
-          opacity: 1;
         }
         .glow-hover:hover video,
         .glow-hover:focus video {
           transform: scale(1.02);
-          filter: saturate(1.05) contrast(1.02);
+          filter: saturate(1.06) contrast(1.03);
         }
 
-        /* Touch devices: emulate hover on first tap */
+        /* Touch devices: emulate hover on tap */
         @media (hover: none) and (pointer: coarse) {
           .glow-hover:active {
             transform: translateY(-1px) scale(1.01);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.38), 0 0 0 2px rgba(41,182,246,0.18), 0 0 18px rgba(41,182,246,0.26);
+            box-shadow:
+              0 24px 74px rgba(0,0,0,0.40),
+              0 0 0 2px rgba(41,182,246,0.22),
+              0 0 26px rgba(41,182,246,0.30);
           }
-          .glow-hover:active .glow-ring { opacity: 1; }
         }
 
-        /* Responsive widths to keep aspect ratio */
+        /* Responsive size bumps (keep it bigger at each breakpoint) */
         @media (max-width: 1200px) {
-          .hero-video-frame { width: 360px; }
+          .hero-video-frame { width: 440px; height: calc(440px / ${GIF_ASPECT}); }
         }
         @media (max-width: 992px) {
-          .hero-section { gap: 20px; }
-          .hero-video-frame { width: 320px; }
+          .hero-section { gap: 22px; }
+          .hero-video-frame { width: 400px; height: calc(400px / ${GIF_ASPECT}); }
         }
         @media (max-width: 768px) {
           .hero-section {
@@ -316,7 +323,8 @@ function HeroSection() {
             gap: 24px;
           }
           .hero-video-frame {
-            width: min(92vw, ${GIF_WIDTH}px);
+            width: min(96vw, ${GIF_WIDTH}px);
+            height: calc(min(96vw, ${GIF_WIDTH}px) / ${GIF_ASPECT});
           }
         }
       `}</style>
