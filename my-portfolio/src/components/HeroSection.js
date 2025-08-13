@@ -1,4 +1,4 @@
-// HeroSection.jsx — Resume button fixed to reliably open/download the PDF from public/assets
+// HeroSection.jsx — right-side profile replaced with looping video in same frame
 
 import React from "react";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
@@ -217,21 +217,39 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* Right side: profile photo */}
-      <div className="hero-photo" tabIndex={0}>
-        <img
-          src="assets/img/20230624_175741.jpg"
-          alt="Aryanil Dey"
-          draggable={false}
+      {/* Right side: profile video (replaces image) */}
+      <div
+        className="hero-photo"
+        tabIndex={0}
+        style={{
+          width: 420,
+          height: 520,
+          borderRadius: 24,
+          overflow: "hidden",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+          background: "linear-gradient(135deg,#22314b 0%, #3f5870 100%)",
+          flexShrink: 0
+        }}
+      >
+        <video
+          src="/assets/hero/hero-loop.mp4"     // place your video at public/assets/hero/hero-loop.mp4
+          poster="/assets/hero/hero-poster.jpg" // optional poster while loading
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
           style={{
             width: "100%",
             height: "100%",
             objectFit: "cover",
             borderRadius: "inherit",
-            background: "linear-gradient(135deg,#22314b 0%, #3f5870 100%)",
-            userSelect: "none"
+            display: "block",
+            backgroundColor: "#000"
           }}
-        />
+        >
+          Your browser does not support the video tag.
+        </video>
       </div>
     </section>
   );
