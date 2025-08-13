@@ -232,7 +232,7 @@ function HeroSection() {
         }}
       >
         <video
-          src="/assets/hero/hero-loop.mp4"     // place your video at public/assets/hero/hero-loop.mp4
+          src="assets/video.mp4"     // place your video at public/assets/hero/hero-loop.mp4
           poster="/assets/hero/hero-poster.jpg" // optional poster while loading
           autoPlay
           muted
