@@ -1,4 +1,4 @@
-// HeroSection.jsx — hero video fitted in a rectangle frame
+// HeroSection.jsx — hero video sized to match the GIF's rectangular frame
 
 import React from "react";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
@@ -18,10 +18,11 @@ function HeroSection() {
   const resumeHref = "/assets/AD_Resume.pdf";
   const resumeHrefCacheBust = "/assets/AD_Resume.pdf?v=2";
 
-  // Exact video dimensions (update if needed)
-  const VIDEO_WIDTH = 640;
-  const VIDEO_HEIGHT = 360;
-  const VIDEO_ASPECT = VIDEO_WIDTH / VIDEO_HEIGHT;
+  // Replace with your GIF's exact pixel dimensions
+  // Example: if GIF is 640x360 (16:9), set these accordingly.
+  const GIF_WIDTH = 640;
+  const GIF_HEIGHT = 360;
+  const GIF_ASPECT = GIF_WIDTH / GIF_HEIGHT; // 16/9 in this example
 
   return (
     <section
@@ -149,24 +150,30 @@ function HeroSection() {
           <i className="bi bi-file-earmark-arrow-down" style={{ fontSize: 20, color: "#e9f4ff" }} />
           <span>Resume</span>
         </a>
+
+        {/* Socials omitted for brevity (keep your existing) */}
       </div>
 
-      {/* Right side: rectangular video */}
+      {/* Right side: rectangular video matching GIF aspect */}
       <div
         className="hero-video-frame"
+        tabIndex={0}
         style={{
-          width: 420,
-          aspectRatio: VIDEO_ASPECT,
-          height: `calc(420px / ${VIDEO_ASPECT})`,
-          borderRadius: 0,
+          // Base width in px scaled from GIF, but responsive via max/min
+          width: 420,                                   // base desktop width
+          aspectRatio: GIF_ASPECT,                      // lock to GIF's ratio
+          height: `calc(420px / ${GIF_ASPECT})`,        // fallback for browsers without aspect-ratio
+          borderRadius: 0,                              // rectangular frame
           overflow: "hidden",
           boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
           background: "#000",
-          flexShrink: 0
+          flexShrink: 0,
+          display: "block"
         }}
       >
         <video
-          src="assets/video.mp4" // place your uploaded file in public/assets/hero/video.mp4
+          src="/assets/hero/hero-loop.mp4"      // put video at public/assets/hero/hero-loop.mp4
+          poster="/assets/hero/hero-poster.jpg" // optional
           autoPlay
           muted
           loop
@@ -175,11 +182,16 @@ function HeroSection() {
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "cover"
+            objectFit: "cover",
+            display: "block",
+            backgroundColor: "#000"
           }}
-        />
+        >
+          Your browser does not support the video tag.
+        </video>
       </div>
 
+      {/* Responsive sizing to keep the same GIF ratio at smaller breakpoints */}
       <style>{`
         @media (max-width: 1200px) {
           .hero-video-frame { width: 360px; }
@@ -194,7 +206,13 @@ function HeroSection() {
             gap: 24px;
           }
           .hero-video-frame {
-            width: min(92vw, ${VIDEO_WIDTH}px);
+            width: min(92vw, ${GIF_WIDTH}px); /* cap at GIF pixel width, fill up to 92vw */
+          }
+        }
+        /* Fallback for browsers without aspect-ratio support: enforce height from width */
+        @supports not (aspect-ratio: 1) {
+          .hero-video-frame {
+            height: calc(var(--frame-w, 420px) / ${GIF_ASPECT});
           }
         }
       `}</style>
