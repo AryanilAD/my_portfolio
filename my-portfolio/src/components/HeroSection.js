@@ -1,4 +1,4 @@
-// HeroSection.jsx — bigger video frame + light blue glow + curved corners
+// HeroSection.jsx — bigger video frame + stronger blue glow + curved corners
 
 import React from "react";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
@@ -223,20 +223,19 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* Right side: bigger video with light blue glow + curved corners */}
+      {/* Right side: bigger video with stronger blue glow + curved corners */}
       <div
         className="hero-video-frame glow-hover"
         tabIndex={0}
         style={{
-          // Bigger base size
-          width: 480,                                // was 420 → increased
+          width: 480,
           aspectRatio: GIF_ASPECT,
           height: `calc(480px / ${GIF_ASPECT})`,
-          borderRadius: 18,                          // curved corners
+          borderRadius: 18,
           overflow: "hidden",
-          // Persistent subtle blue glow + base shadow
+          // Stronger persistent blue glow + base shadow
           boxShadow:
-            "0 22px 70px rgba(0,0,0,0.38), 0 0 0 1px rgba(41,182,246,0.18), 0 0 24px rgba(41,182,246,0.22)",
+            "0 26px 86px rgba(0,0,0,0.45), 0 0 0 2px rgba(41,182,246,0.24), 0 0 34px rgba(41,182,246,0.28)",
           background: "#0a0f1a",
           flexShrink: 0,
           display: "block",
@@ -244,7 +243,7 @@ function HeroSection() {
           transition: "transform 220ms ease, box-shadow 220ms ease, filter 220ms ease"
         }}
       >
-        {/* subtle inner ring to enhance glow */}
+        {/* stronger inner ring at rest */}
         <span
           aria-hidden="true"
           className="glow-ring"
@@ -254,8 +253,8 @@ function HeroSection() {
             pointerEvents: "none",
             borderRadius: 18,
             background:
-              "radial-gradient(120% 120% at 50% 50%, rgba(41,182,246,0) 55%, rgba(41,182,246,0.16) 85%, rgba(41,182,246,0) 100%)",
-            opacity: 0.65    // visible even when not hovered (light glow)
+              "radial-gradient(120% 120% at 50% 50%, rgba(41,182,246,0) 52%, rgba(41,182,246,0.22) 78%, rgba(41,182,246,0) 100%)",
+            opacity: 0.85
           }}
         />
         <video
@@ -281,34 +280,41 @@ function HeroSection() {
       </div>
 
       <style>{`
-        /* Hover/focus intensifies glow and adds slight lift */
+        /* Hover/focus — amplify glow and lift */
         .glow-hover:hover,
         .glow-hover:focus {
-          transform: translateY(-2px) scale(1.018);
+          transform: translateY(-2px) scale(1.02);
           box-shadow:
-            0 28px 84px rgba(0,0,0,0.42),
-            0 0 0 2px rgba(41,182,246,0.24),
-            0 0 30px rgba(41,182,246,0.34);
+            0 34px 98px rgba(0,0,0,0.50),
+            0 0 0 3px rgba(41,182,246,0.32),
+            0 0 44px rgba(41,182,246,0.42),
+            0 0 90px rgba(41,182,246,0.22);
           outline: none;
+        }
+        .glow-hover:hover .glow-ring,
+        .glow-hover:focus .glow-ring {
+          opacity: 1;
+          filter: drop-shadow(0 0 22px rgba(41,182,246,0.35));
         }
         .glow-hover:hover video,
         .glow-hover:focus video {
-          transform: scale(1.02);
-          filter: saturate(1.06) contrast(1.03);
+          transform: scale(1.025);
+          filter: saturate(1.08) contrast(1.05);
         }
 
-        /* Touch devices: emulate hover on tap */
+        /* Touch devices: stronger active glow */
         @media (hover: none) and (pointer: coarse) {
           .glow-hover:active {
-            transform: translateY(-1px) scale(1.01);
+            transform: translateY(-1px) scale(1.015);
             box-shadow:
-              0 24px 74px rgba(0,0,0,0.40),
-              0 0 0 2px rgba(41,182,246,0.22),
-              0 0 26px rgba(41,182,246,0.30);
+              0 30px 92px rgba(0,0,0,0.48),
+              0 0 0 3px rgba(41,182,246,0.30),
+              0 0 40px rgba(41,182,246,0.38),
+              0 0 80px rgba(41,182,246,0.18);
           }
         }
 
-        /* Responsive size bumps (keep it bigger at each breakpoint) */
+        /* Responsive sizes */
         @media (max-width: 1200px) {
           .hero-video-frame { width: 440px; height: calc(440px / ${GIF_ASPECT}); }
         }
