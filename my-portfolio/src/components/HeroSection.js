@@ -1,4 +1,4 @@
-// HeroSection.jsx — hero video sized to match the GIF's rectangular frame
+// HeroSection.jsx — hero video with blue glow hover/tap animation
 
 import React from "react";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
@@ -18,11 +18,10 @@ function HeroSection() {
   const resumeHref = "/assets/AD_Resume.pdf";
   const resumeHrefCacheBust = "/assets/AD_Resume.pdf?v=2";
 
-  // Replace with your GIF's exact pixel dimensions
-  // Example: if GIF is 640x360 (16:9), set these accordingly.
+  // Replace with your GIF/video dimensions
   const GIF_WIDTH = 640;
   const GIF_HEIGHT = 360;
-  const GIF_ASPECT = GIF_WIDTH / GIF_HEIGHT; // 16/9 in this example
+  const GIF_ASPECT = GIF_WIDTH / GIF_HEIGHT;
 
   return (
     <section
@@ -151,29 +150,112 @@ function HeroSection() {
           <span>Resume</span>
         </a>
 
-        {/* Socials omitted for brevity (keep your existing) */}
+        {/* Socials (keep your existing GitHub/LinkedIn block) */}
+        <div
+          style={{
+            fontSize: 0,
+            textAlign: "left",
+            marginTop: 24,
+            marginLeft: 26,
+            display: "flex",
+            gap: 18
+          }}
+        >
+          <a
+            className="hero-social-white"
+            href="https://github.com/AryanilAD"
+            rel="noopener noreferrer"
+            target="_blank"
+            title="GitHub"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 68,
+              height: 68,
+              borderRadius: "50%",
+              background: "rgba(34,49,75,0.15)",
+              boxShadow: "0 2px 18px 0 #29b6f622, 0 1.5px 2px #151d2f11",
+              transition: "box-shadow 0.28s, background 0.20s, transform 0.17s"
+            }}
+            onMouseOver={e => e.currentTarget.style.background = "rgba(65,183,255,0.20)"}
+            onMouseOut={e => e.currentTarget.style.background = "rgba(34,49,75,0.15)"}
+          >
+            <i
+              className="bi bi-github"
+              style={{
+                fontSize: 48,
+                color: "#fff",
+                transition: "color 0.22s, transform 0.18s"
+              }}
+            />
+          </a>
+          <a
+            className="hero-social-white"
+            href="https://www.linkedin.com/in/aryanildey"
+            rel="noopener noreferrer"
+            target="_blank"
+            title="LinkedIn"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 68,
+              height: 68,
+              borderRadius: "50%",
+              background: "rgba(34,49,75,0.15)",
+              boxShadow: "0 2px 18px 0 #29b6f622, 0 1.5px 2px #151d2f11",
+              transition: "box-shadow 0.28s, background 0.20s, transform 0.17s"
+            }}
+            onMouseOver={e => e.currentTarget.style.background = "rgba(65,183,255,0.20)"}
+            onMouseOut={e => e.currentTarget.style.background = "rgba(34,49,75,0.15)"}
+          >
+            <i
+              className="bi bi-linkedin"
+              style={{
+                fontSize: 48,
+                color: "#fff",
+                transition: "color 0.22s, transform 0.18s"
+              }}
+            />
+          </a>
+        </div>
       </div>
 
-      {/* Right side: rectangular video matching GIF aspect */}
+      {/* Right side: rectangular video with blue glow hover */}
       <div
-        className="hero-video-frame"
+        className="hero-video-frame glow-hover"
         tabIndex={0}
         style={{
-          // Base width in px scaled from GIF, but responsive via max/min
-          width: 420,                                   // base desktop width
-          aspectRatio: GIF_ASPECT,                      // lock to GIF's ratio
-          height: `calc(420px / ${GIF_ASPECT})`,        // fallback for browsers without aspect-ratio
-          borderRadius: 0,                              // rectangular frame
+          width: 420,
+          aspectRatio: GIF_ASPECT,
+          height: `calc(420px / ${GIF_ASPECT})`,
+          borderRadius: 0,
           overflow: "hidden",
           boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
           background: "#000",
           flexShrink: 0,
-          display: "block"
+          display: "block",
+          position: "relative",
+          transition: "transform 220ms ease, box-shadow 220ms ease, filter 220ms ease"
         }}
       >
+        {/* subtle inner gradient ring for glow */}
+        <span
+          aria-hidden="true"
+          className="glow-ring"
+          style={{
+            position: "absolute",
+            inset: 0,
+            pointerEvents: "none",
+            background: "radial-gradient(120% 120% at 50% 50%, rgba(41,182,246,0) 55%, rgba(41,182,246,0.18) 85%, rgba(41,182,246,0) 100%)",
+            opacity: 0,
+            transition: "opacity 220ms ease"
+          }}
+        />
         <video
-          src="assets/video.mp4"      // put video at public/assets/hero/hero-loop.mp4
-          poster="/assets/hero/hero-poster.jpg" // optional
+          src="assets/video.mp4"
+          poster="/assets/hero/hero-poster.jpg"
           autoPlay
           muted
           loop
@@ -184,19 +266,47 @@ function HeroSection() {
             height: "100%",
             objectFit: "cover",
             display: "block",
-            backgroundColor: "#000"
+            backgroundColor: "#000",
+            transition: "transform 220ms ease, filter 220ms ease"
           }}
         >
           Your browser does not support the video tag.
         </video>
       </div>
 
-      {/* Responsive sizing to keep the same GIF ratio at smaller breakpoints */}
       <style>{`
+        /* Hover/tap glow effect */
+        .glow-hover:hover,
+        .glow-hover:focus {
+          transform: translateY(-2px) scale(1.015);
+          box-shadow: 0 24px 70px rgba(0,0,0,0.40), 0 0 0 2px rgba(41,182,246,0.20), 0 0 22px rgba(41,182,246,0.30);
+          outline: none;
+        }
+        .glow-hover:hover .glow-ring,
+        .glow-hover:focus .glow-ring {
+          opacity: 1;
+        }
+        .glow-hover:hover video,
+        .glow-hover:focus video {
+          transform: scale(1.02);
+          filter: saturate(1.05) contrast(1.02);
+        }
+
+        /* Touch devices: emulate hover on first tap */
+        @media (hover: none) and (pointer: coarse) {
+          .glow-hover:active {
+            transform: translateY(-1px) scale(1.01);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.38), 0 0 0 2px rgba(41,182,246,0.18), 0 0 18px rgba(41,182,246,0.26);
+          }
+          .glow-hover:active .glow-ring { opacity: 1; }
+        }
+
+        /* Responsive widths to keep aspect ratio */
         @media (max-width: 1200px) {
           .hero-video-frame { width: 360px; }
         }
         @media (max-width: 992px) {
+          .hero-section { gap: 20px; }
           .hero-video-frame { width: 320px; }
         }
         @media (max-width: 768px) {
@@ -206,13 +316,7 @@ function HeroSection() {
             gap: 24px;
           }
           .hero-video-frame {
-            width: min(92vw, ${GIF_WIDTH}px); /* cap at GIF pixel width, fill up to 92vw */
-          }
-        }
-        /* Fallback for browsers without aspect-ratio support: enforce height from width */
-        @supports not (aspect-ratio: 1) {
-          .hero-video-frame {
-            height: calc(var(--frame-w, 420px) / ${GIF_ASPECT});
+            width: min(92vw, ${GIF_WIDTH}px);
           }
         }
       `}</style>
