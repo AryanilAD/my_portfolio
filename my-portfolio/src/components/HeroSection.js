@@ -1,4 +1,4 @@
-// HeroSection.jsx — right-side profile replaced with looping video in same frame
+// HeroSection.jsx — hero video fitted in a rectangle frame
 
 import React from "react";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
@@ -18,6 +18,11 @@ function HeroSection() {
   const resumeHref = "/assets/AD_Resume.pdf";
   const resumeHrefCacheBust = "/assets/AD_Resume.pdf?v=2";
 
+  // Exact video dimensions (update if needed)
+  const VIDEO_WIDTH = 640;
+  const VIDEO_HEIGHT = 360;
+  const VIDEO_ASPECT = VIDEO_WIDTH / VIDEO_HEIGHT;
+
   return (
     <section
       id="home"
@@ -28,10 +33,11 @@ function HeroSection() {
         justifyContent: "space-between",
         alignItems: "center",
         padding: "0 5vw",
-        background: "transparent"
+        background: "transparent",
+        gap: 24
       }}
     >
-      {/* Left side: text */}
+      {/* Left side */}
       <div style={{ flex: 1, maxWidth: 540 }}>
         <h1
           style={{
@@ -49,7 +55,6 @@ function HeroSection() {
           Aryanil Dey
         </h1>
 
-        {/* Typewriter group (column so the button stays below) */}
         <div
           style={{
             display: "flex",
@@ -83,7 +88,7 @@ function HeroSection() {
           />
         </div>
 
-        {/* Resume button — glassy + hover animation, reliable PDF path */}
+        {/* Resume button */}
         <a
           href={resumeHref}
           className="cv-download-btn"
@@ -144,96 +149,24 @@ function HeroSection() {
           <i className="bi bi-file-earmark-arrow-down" style={{ fontSize: 20, color: "#e9f4ff" }} />
           <span>Resume</span>
         </a>
-
-        {/* Social Icons */}
-        <div
-          style={{
-            fontSize: 0,
-            textAlign: "left",
-            marginTop: 24,
-            marginLeft: 26,
-            display: "flex",
-            gap: 18
-          }}
-        >
-          <a
-            className="hero-social-white"
-            href="https://github.com/AryanilAD"
-            rel="noopener noreferrer"
-            target="_blank"
-            title="GitHub"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 68,
-              height: 68,
-              borderRadius: "50%",
-              background: "rgba(34,49,75,0.15)",
-              boxShadow: "0 2px 18px 0 #29b6f622, 0 1.5px 2px #151d2f11",
-              transition: "box-shadow 0.28s, background 0.20s, transform 0.17s"
-            }}
-            onMouseOver={e => e.currentTarget.style.background = "rgba(65,183,255,0.20)"}
-            onMouseOut={e => e.currentTarget.style.background = "rgba(34,49,75,0.15)"}
-          >
-            <i
-              className="bi bi-github"
-              style={{
-                fontSize: 48,
-                color: "#fff",
-                transition: "color 0.22s, transform 0.18s"
-              }}
-            />
-          </a>
-          <a
-            className="hero-social-white"
-            href="https://www.linkedin.com/in/aryanildey"
-            rel="noopener noreferrer"
-            target="_blank"
-            title="LinkedIn"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 68,
-              height: 68,
-              borderRadius: "50%",
-              background: "rgba(34,49,75,0.15)",
-              boxShadow: "0 2px 18px 0 #29b6f622, 0 1.5px 2px #151d2f11",
-              transition: "box-shadow 0.28s, background 0.20s, transform 0.17s"
-            }}
-            onMouseOver={e => e.currentTarget.style.background = "rgba(65,183,255,0.20)"}
-            onMouseOut={e => e.currentTarget.style.background = "rgba(34,49,75,0.15)"}
-          >
-            <i
-              className="bi bi-linkedin"
-              style={{
-                fontSize: 48,
-                color: "#fff",
-                transition: "color 0.22s, transform 0.18s"
-              }}
-            />
-          </a>
-        </div>
       </div>
 
-      {/* Right side: profile video (replaces image) */}
+      {/* Right side: rectangular video */}
       <div
-        className="hero-photo"
-        tabIndex={0}
+        className="hero-video-frame"
         style={{
           width: 420,
-          height: 520,
-          borderRadius: 24,
+          aspectRatio: VIDEO_ASPECT,
+          height: `calc(420px / ${VIDEO_ASPECT})`,
+          borderRadius: 0,
           overflow: "hidden",
           boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
-          background: "linear-gradient(135deg,#22314b 0%, #3f5870 100%)",
+          background: "#000",
           flexShrink: 0
         }}
       >
         <video
-          src="assets/video.mp4"     // place your video at public/assets/hero/hero-loop.mp4
-          poster="/assets/hero/hero-poster.jpg" // optional poster while loading
+          src="/assets/hero/video.mp4" // place your uploaded file in public/assets/hero/video.mp4
           autoPlay
           muted
           loop
@@ -242,15 +175,29 @@ function HeroSection() {
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "cover",
-            borderRadius: "inherit",
-            display: "block",
-            backgroundColor: "#000"
+            objectFit: "cover"
           }}
-        >
-          Your browser does not support the video tag.
-        </video>
+        />
       </div>
+
+      <style>{`
+        @media (max-width: 1200px) {
+          .hero-video-frame { width: 360px; }
+        }
+        @media (max-width: 992px) {
+          .hero-video-frame { width: 320px; }
+        }
+        @media (max-width: 768px) {
+          .hero-section {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 24px;
+          }
+          .hero-video-frame {
+            width: min(92vw, ${VIDEO_WIDTH}px);
+          }
+        }
+      `}</style>
     </section>
   );
 }
