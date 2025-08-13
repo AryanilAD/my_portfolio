@@ -166,7 +166,7 @@ function HeroSection() {
         }}
       >
         <video
-          src="/assets/hero/video.mp4" // place your uploaded file in public/assets/hero/video.mp4
+          src="assets/video.mp4" // place your uploaded file in public/assets/hero/video.mp4
           autoPlay
           muted
           loop
