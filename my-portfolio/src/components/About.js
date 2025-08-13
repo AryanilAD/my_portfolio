@@ -15,18 +15,18 @@ function About() {
         <div className="col-lg-7">
           <div style={{ fontSize: '1.1rem', lineHeight: '1.6' }}>
             <p>
-              <span role="img" aria-label="wave">👋</span> <strong>Hello, I'm Aryanil, a Data Dazzler.</strong>
+              <span role="img" aria-label="wave"></span> <strong>Hello, I'm Aryanil.</strong>
             </p>
             <p>Thank you for visiting my profile! If you're in a hurry, this section is for you.
             </p>
             <p>
-              <span role="img" aria-label="rocket">🚀</span> <strong>Professional Journey</strong>
+              <span role="img" aria-label="rocket"></span> <strong>Professional Journey</strong>
             </p>
             <p>From enhancing machine learning models to optimize business operations to delivering detailed analysis, my work spans wide domains.<br />
               <span style={{ color: '#1976d2' }}>Currently, I am working as an AI/ML Engineer.</span>
             </p>
             <p>
-              <span role="img" aria-label="laptop">💻</span> <strong>Toolbox &amp; Expertise</strong>
+              <span role="img" aria-label="laptop"></span> <strong>Toolbox &amp; Expertise</strong>
             </p>
             <ul>
               <li><b>Programming:</b> Python, R, SQL, SAS, Git, HTML</li>
@@ -35,7 +35,7 @@ function About() {
               <li><b>Framework/Cloud:</b> Flask, AWS EC2, Amazon SageMaker, AWS S3</li>
             </ul>
             <p>
-              <span role="img" aria-label="handshake">🤝</span> <strong>Let's Collaborate</strong>
+              <span role="img" aria-label="handshake"></span> <strong>Let's Collaborate</strong>
             </p>
             <p>
               If you share a passion for data or want to collaborate, feel free to reach out!
