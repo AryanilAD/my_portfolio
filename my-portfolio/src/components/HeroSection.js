@@ -1,5 +1,4 @@
-// HeroSection.jsx — bigger video frame + stronger blue glow + curved corners
-
+// HeroSection.jsx — bigger video frame + stronger blue glow with gradual hover ramp + curved corners
 import React from "react";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
 
@@ -223,7 +222,7 @@ function HeroSection() {
         </div>
       </div>
 
-      {/* Right side: bigger video with stronger blue glow + curved corners */}
+      {/* Right side: bigger video with stronger blue glow + gradual hover ramp + curved corners */}
       <div
         className="hero-video-frame glow-hover"
         tabIndex={0}
@@ -233,14 +232,14 @@ function HeroSection() {
           height: `calc(480px / ${GIF_ASPECT})`,
           borderRadius: 18,
           overflow: "hidden",
-          // Stronger persistent blue glow + base shadow
+          // Stronger persistent blue glow + base shadow (idle)
           boxShadow:
-            "0 26px 86px rgba(0,0,0,0.45), 0 0 0 2px rgba(41,182,246,0.24), 0 0 34px rgba(41,182,246,0.28)",
+            "0 32px 110px rgba(0,0,0,0.52), 0 0 0 3px rgba(41,182,246,0.30), 0 0 46px rgba(41,182,246,0.36)",
           background: "#0a0f1a",
           flexShrink: 0,
           display: "block",
           position: "relative",
-          transition: "transform 220ms ease, box-shadow 220ms ease, filter 220ms ease"
+          transition: "transform 260ms ease, box-shadow 420ms ease, filter 260ms ease"
         }}
       >
         {/* stronger inner ring at rest */}
@@ -253,8 +252,9 @@ function HeroSection() {
             pointerEvents: "none",
             borderRadius: 18,
             background:
-              "radial-gradient(120% 120% at 50% 50%, rgba(41,182,246,0) 52%, rgba(41,182,246,0.22) 78%, rgba(41,182,246,0) 100%)",
-            opacity: 0.85
+              "radial-gradient(120% 120% at 50% 50%, rgba(41,182,246,0) 50%, rgba(41,182,246,0.28) 78%, rgba(41,182,246,0) 100%)",
+            opacity: 0.95,
+            transition: "opacity 420ms ease, filter 420ms ease"
           }}
         />
         <video
@@ -272,7 +272,7 @@ function HeroSection() {
             display: "block",
             backgroundColor: "#000",
             borderRadius: 18,
-            transition: "transform 220ms ease, filter 220ms ease"
+            transition: "transform 320ms ease, filter 320ms ease"
           }}
         >
           Your browser does not support the video tag.
@@ -280,37 +280,70 @@ function HeroSection() {
       </div>
 
       <style>{`
-        /* Hover/focus — amplify glow and lift */
+        /* Gradual, amplified glow on hover/focus with one soft pulse */
         .glow-hover:hover,
         .glow-hover:focus {
-          transform: translateY(-2px) scale(1.02);
+          transform: translateY(-2px) scale(1.024);
           box-shadow:
-            0 34px 98px rgba(0,0,0,0.50),
-            0 0 0 3px rgba(41,182,246,0.32),
-            0 0 44px rgba(41,182,246,0.42),
-            0 0 90px rgba(41,182,246,0.22);
+            0 42px 132px rgba(0,0,0,0.56),
+            0 0 0 4px rgba(41,182,246,0.38),
+            0 0 62px rgba(41,182,246,0.50),
+            0 0 120px rgba(41,182,246,0.28);
           outline: none;
+          transition:
+            transform 320ms cubic-bezier(.22,.9,.26,1),
+            box-shadow 680ms cubic-bezier(.22,.9,.26,1);
+          animation: glowBreath 1.6s ease-in-out 1;
         }
         .glow-hover:hover .glow-ring,
         .glow-hover:focus .glow-ring {
           opacity: 1;
-          filter: drop-shadow(0 0 22px rgba(41,182,246,0.35));
+          filter: drop-shadow(0 0 28px rgba(41,182,246,0.45));
+          transition: opacity 680ms ease, filter 680ms ease;
         }
         .glow-hover:hover video,
         .glow-hover:focus video {
-          transform: scale(1.025);
-          filter: saturate(1.08) contrast(1.05);
+          transform: scale(1.03);
+          filter: saturate(1.10) contrast(1.07);
         }
 
-        /* Touch devices: stronger active glow */
+        /* Gentle pulse to emphasize the ramp at hover start */
+        @keyframes glowBreath {
+          0% {
+            box-shadow:
+              0 32px 110px rgba(0,0,0,0.52),
+              0 0 0 3px rgba(41,182,246,0.30),
+              0 0 46px rgba(41,182,246,0.36),
+              0 0 0 rgba(41,182,246,0.00);
+          }
+          50% {
+            box-shadow:
+              0 38px 120px rgba(0,0,0,0.54),
+              0 0 0 3.5px rgba(41,182,246,0.34),
+              0 0 54px rgba(41,182,246,0.42),
+              0 0 80px rgba(41,182,246,0.20);
+          }
+          100% {
+            box-shadow:
+              0 42px 132px rgba(0,0,0,0.56),
+              0 0 0 4px rgba(41,182,246,0.38),
+              0 0 62px rgba(41,182,246,0.50),
+              0 0 120px rgba(41,182,246,0.28);
+          }
+        }
+
+        /* Touch devices: stronger active, with gradual ramp */
         @media (hover: none) and (pointer: coarse) {
           .glow-hover:active {
-            transform: translateY(-1px) scale(1.015);
+            transform: translateY(-1px) scale(1.016);
             box-shadow:
-              0 30px 92px rgba(0,0,0,0.48),
-              0 0 0 3px rgba(41,182,246,0.30),
-              0 0 40px rgba(41,182,246,0.38),
-              0 0 80px rgba(41,182,246,0.18);
+              0 38px 120px rgba(0,0,0,0.54),
+              0 0 0 3.5px rgba(41,182,246,0.34),
+              0 0 54px rgba(41,182,246,0.42),
+              0 0 100px rgba(41,182,246,0.24);
+            transition:
+              transform 220ms ease,
+              box-shadow 560ms ease;
           }
         }
 
@@ -337,5 +370,4 @@ function HeroSection() {
     </section>
   );
 }
-
 export default HeroSection;
