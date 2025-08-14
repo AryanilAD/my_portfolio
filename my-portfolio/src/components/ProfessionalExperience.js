@@ -1,3 +1,4 @@
+// ProfessionalExperience.jsx — responsive stacked cards + hover animation
 import React, { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -109,110 +110,108 @@ function FormatSkills({ skills }) {
   );
 }
 
-// Group array into rows of two
-function chunk(arr, size) {
-  const out = [];
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-  return out;
-}
-
 function ProfessionalExperience() {
   useEffect(() => {
     AOS.init({ duration: 800, once: true });
   }, []);
-  // Newest at top, two per row
-  const pairs = chunk([...experiences].reverse(), 2);
+
+  // Newest first
+  const list = [...experiences].reverse();
 
   return (
-    <section
-      id="professional-experience"
-      className="container py-5"
-      data-aos="fade-up"
-    >
+    <section id="professional-experience" className="container py-5" data-aos="fade-up">
       <h2 className="fw-bold mb-4">Professional Experience</h2>
-      <div
-        style={{
-          fontWeight: 500,
-          fontSize: "1rem",
-          color: "#b6e1fc",
-          marginBottom: "20px"
-        }}
-      >
+
+      <div style={{ fontWeight: 500, fontSize: "1rem", color: "#b6e1fc", marginBottom: 20 }}>
         <h5>Total Experience:&nbsp;{totalExperienceString(experiences)}</h5>
       </div>
 
-      <div style={{ maxWidth: 820, margin: "0 auto", position: "relative" }}>
-        {pairs.map((pair, idx) => (
-          <div
-            key={idx}
-            style={{
-              display: "flex",
-              gap: 20,
-              marginBottom: "42px",
-              justifyContent: "center"
-            }}
-          >
-            {pair.map((exp, colIdx) => (
-              <div
-                key={colIdx}
-                style={{
-                  flex: 1,
-                  background:
-                    "linear-gradient(135deg, #22314b 0%, #3f5870 100%)",
-                  borderRadius: 18,
-                  boxShadow: "0 5px 20px 0 rgba(33,58,110,0.10)",
-                  color: "#e2e8ef",
-                  padding: "1.13rem 1.23rem 1.09rem 1.28rem",
-                  minWidth: 320,
-                  maxWidth: 406,
-                  fontFamily: "inherit",
-                  fontSize: ".99rem"
-                }}
-              >
-                <div
-                  style={{
-                    fontWeight: 800,
-                    color: "#fff",
-                    fontSize: "1.09rem",
-                    marginBottom: 2
-                  }}
-                >
-                  {exp.title}
-                </div>
-                <div style={{ fontWeight: 600, color: "#bbd8fd" }}>
-                  {exp.role}
-                </div>
-                <div style={{ fontWeight: 700, color: "#bfdafe" }}>
-                  {exp.location}
-                </div>
-                <div
-                  style={{
-                    fontWeight: 700,
-                    fontSize: ".98rem",
-                    color: "#bfdafe",
-                    marginBottom: 4
-                  }}
-                >
-                  {exp.period}
-                </div>
-                {exp.desc && exp.desc.length > 0 && (
-                  <ul style={{ margin: "7px 0 2px 0", paddingLeft: 17 }}>
-                    {exp.desc.map((txt, j) => (
-                      <li key={j} style={{ fontSize: ".96rem" }}>
-                        {txt}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <FormatSkills skills={exp.skills} />
-              </div>
-            ))}
-            {pair.length === 1 && (
-              <div style={{ flex: 1, minWidth: 320, maxWidth: 406 }} />
+      {/* Responsive grid wrapper */}
+      <div className="pe-grid">
+        {list.map((exp, i) => (
+          <article key={i} className="pe-card" data-aos="zoom-in-up" data-aos-delay={(i % 6) * 30}>
+            <div className="pe-title">{exp.title}</div>
+            <div className="pe-role">{exp.role}</div>
+            <div className="pe-loc">{exp.location}</div>
+            <div className="pe-period">{exp.period}</div>
+
+            {exp.desc?.length > 0 && (
+              <ul className="pe-desc">
+                {exp.desc.map((txt, j) => (
+                  <li key={j}>{txt}</li>
+                ))}
+              </ul>
             )}
-          </div>
+
+            <FormatSkills skills={exp.skills} />
+          </article>
         ))}
       </div>
+
+      {/* Styles */}
+      <style>{`
+        /* Grid: 1 col on phones, 2 cols from ≥768px */
+        .pe-grid {
+          max-width: 980px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 22px;
+        }
+        @media (min-width: 768px) {
+          .pe-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+          }
+        }
+
+        .pe-card {
+          background: linear-gradient(135deg, #22314b 0%, #3f5870 100%);
+          border-radius: 18px;
+          color: #e2e8ef;
+          padding: 1.13rem 1.23rem 1.09rem 1.28rem;
+          box-shadow: 0 5px 20px rgba(33,58,110,0.10);
+          font-family: inherit;
+          font-size: .99rem;
+          transition: transform .22s ease, box-shadow .26s ease, border-color .26s ease, filter .26s ease;
+          position: relative;
+          border: 1px solid rgba(210,222,230,0.08);
+          will-change: transform, box-shadow, filter;
+        }
+        /* Hover/Focus animation: lift + blue glow to match other components */
+        .pe-card:hover,
+        .pe-card:focus-within {
+          transform: translateY(-4px) scale(1.01);
+          box-shadow:
+            0 18px 48px rgba(41,182,246,0.22),
+            0 8px 22px rgba(10,20,40,0.35);
+          border-color: rgba(210,222,230,0.18);
+          outline: none;
+          filter: saturate(1.03) contrast(1.02);
+        }
+
+        .pe-title {
+          font-weight: 800;
+          color: #fff;
+          font-size: 1.09rem;
+          margin-bottom: 2px;
+        }
+        .pe-role { font-weight: 600; color: #bbd8fd; }
+        .pe-loc  { font-weight: 700; color: #bfdafe; }
+        .pe-period {
+          font-weight: 700;
+          font-size: .98rem;
+          color: #bfdafe;
+          margin-bottom: 4px;
+        }
+        .pe-desc { margin: 7px 0 2px 0; padding-left: 17px; }
+        .pe-desc li { font-size: .96rem; }
+
+        /* Make cards stretch nicely on large screens but cap width for readability */
+        @media (min-width: 1200px) {
+          .pe-grid { max-width: 1040px; }
+        }
+      `}</style>
     </section>
   );
 }
