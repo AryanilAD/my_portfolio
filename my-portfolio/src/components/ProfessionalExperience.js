@@ -1,4 +1,4 @@
-// ProfessionalExperience.jsx — responsive stacked cards + hover animation
+// ProfessionalExperience.jsx — responsive stacked cards + hover animation + jump effect
 import React, { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -121,7 +121,6 @@ function ProfessionalExperience() {
   return (
     <section id="professional-experience" className="container py-5" data-aos="fade-up">
       <h2 className="fw-bold mb-4">Professional Experience</h2>
-
       <div style={{ fontWeight: 500, fontSize: "1rem", color: "#b6e1fc", marginBottom: 20 }}>
         <h5>Total Experience:&nbsp;{totalExperienceString(experiences)}</h5>
       </div>
@@ -134,7 +133,6 @@ function ProfessionalExperience() {
             <div className="pe-role">{exp.role}</div>
             <div className="pe-loc">{exp.location}</div>
             <div className="pe-period">{exp.period}</div>
-
             {exp.desc?.length > 0 && (
               <ul className="pe-desc">
                 {exp.desc.map((txt, j) => (
@@ -142,7 +140,6 @@ function ProfessionalExperience() {
                 ))}
               </ul>
             )}
-
             <FormatSkills skills={exp.skills} />
           </article>
         ))}
@@ -178,16 +175,24 @@ function ProfessionalExperience() {
           border: 1px solid rgba(210,222,230,0.08);
           will-change: transform, box-shadow, filter;
         }
-        /* Hover/Focus animation: lift + blue glow to match other components */
+
+        /* Hover/Focus animation: lift + blue glow + jump effect */
         .pe-card:hover,
         .pe-card:focus-within {
-          transform: translateY(-4px) scale(1.01);
+          animation: cardJump 0.4s ease forwards; /* jump animation */
           box-shadow:
             0 18px 48px rgba(41,182,246,0.22),
             0 8px 22px rgba(10,20,40,0.35);
           border-color: rgba(210,222,230,0.18);
           outline: none;
           filter: saturate(1.03) contrast(1.02);
+        }
+
+        @keyframes cardJump {
+          0%   { transform: translateY(0) scale(1); }
+          40%  { transform: translateY(-8px) scale(1.02); }
+          70%  { transform: translateY(2px) scale(1.01); }
+          100% { transform: translateY(-4px) scale(1.01); }
         }
 
         .pe-title {
